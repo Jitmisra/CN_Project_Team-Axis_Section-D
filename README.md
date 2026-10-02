@@ -10,7 +10,7 @@ across 4 machines.
 |---|---|---|---|
 | Mac 1 | Kartikey | Private DNS server (dnsmasq) + test client | [`mac1-kartikey-dns/`](./mac1-kartikey-dns) |
 | Mac 2 | Agnik | nginx edge reverse proxy + load balancer + TLS termination | [`mac2-agnik-nginx-edge/`](./mac2-agnik-nginx-edge) |
-| Mac 3 | Vishuti | Backend A (REST API, port 3001) | [`vishuti/`](./vishuti) |
+| Mac 3 | Vishuti | Backend A (REST API, port 3001) | [`backend_a/`](./backend_a) |
 | Mac 4 | Anwesha | Backend B (REST API, port 3002) + test client / evidence | [`backend_b/`](./backend_b) |
 
 ## Request flow
