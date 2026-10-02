@@ -4,6 +4,11 @@ Computer Networks course project: a fully local, private network service platfor
 DNS, an nginx reverse-proxy/load-balancer edge with TLS, and two backend servers,
 across 4 machines.
 
+**See [`ARCHITECTURE.md`](./ARCHITECTURE.md)** for the full system design (topology
+diagram, IP table, request-flow by protocol layer) and
+**[`EVIDENCE_INDEX.md`](./EVIDENCE_INDEX.md)** for a task-by-task map of every piece
+of evidence in this repo.
+
 ## Team & roles
 
 | Machine | Owner | Role | Folder |
