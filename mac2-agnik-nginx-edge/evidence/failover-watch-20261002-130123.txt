@@ -1,0 +1,160 @@
+Watching https://app.cnteam.test:8443/api/status every 1s for 180s. Stop/restart backends on Mac 3 / Mac 4 now in a separate terminal.
+13:01:23  HTTP/1.1 200 OK  X-Backend: B
+13:01:24  HTTP/1.1 200 OK  X-Backend: B
+13:01:25  HTTP/1.1 200 OK  X-Backend: B
+13:01:27  HTTP/1.1 200 OK  X-Backend: B
+13:01:28  HTTP/1.1 200 OK  X-Backend: B
+13:01:29  HTTP/1.1 200 OK  X-Backend: B
+13:01:30  HTTP/1.1 200 OK  X-Backend: B
+13:01:31  HTTP/1.1 200 OK  X-Backend: B
+13:01:32  HTTP/1.1 200 OK  X-Backend: B
+13:01:33  HTTP/1.1 200 OK  X-Backend: B
+13:01:35  HTTP/1.1 200 OK  X-Backend: B
+13:01:36  HTTP/1.1 200 OK  X-Backend: B
+13:01:37  HTTP/1.1 200 OK  X-Backend: B
+13:01:38  HTTP/1.1 200 OK  X-Backend: B
+13:01:39  HTTP/1.1 200 OK  X-Backend: B
+13:01:40  HTTP/1.1 200 OK  X-Backend: B
+13:01:41  HTTP/1.1 200 OK  X-Backend: B
+13:01:42  HTTP/1.1 200 OK  X-Backend: B
+13:01:43  HTTP/1.1 200 OK  X-Backend: B
+13:01:45  HTTP/1.1 200 OK  X-Backend: B
+13:01:46  HTTP/1.1 200 OK  X-Backend: B
+13:01:47  HTTP/1.1 200 OK  X-Backend: B
+13:01:48  HTTP/1.1 200 OK  X-Backend: B
+13:01:49  HTTP/1.1 200 OK  X-Backend: B
+13:01:50  HTTP/1.1 200 OK  X-Backend: B
+13:01:51  HTTP/1.1 200 OK  X-Backend: B
+13:01:52  HTTP/1.1 200 OK  X-Backend: B
+13:01:54  HTTP/1.1 200 OK  X-Backend: B
+13:01:55  HTTP/1.1 200 OK  X-Backend: B
+13:01:56  HTTP/1.1 200 OK  X-Backend: B
+13:01:57  HTTP/1.1 200 OK  X-Backend: B
+13:01:58  HTTP/1.1 200 OK  X-Backend: B
+13:01:59  HTTP/1.1 200 OK  X-Backend: B
+13:02:00  HTTP/1.1 200 OK  X-Backend: B
+13:02:02  HTTP/1.1 200 OK  X-Backend: B
+13:02:03  HTTP/1.1 200 OK  X-Backend: B
+13:02:04  HTTP/1.1 200 OK  X-Backend: B
+13:02:05  HTTP/1.1 200 OK  X-Backend: B
+13:02:06  HTTP/1.1 200 OK  X-Backend: B
+13:02:07  HTTP/1.1 200 OK  X-Backend: B
+13:02:08  HTTP/1.1 200 OK  X-Backend: B
+13:02:09  HTTP/1.1 200 OK  X-Backend: B
+13:02:11  HTTP/1.1 200 OK  X-Backend: B
+13:02:12  HTTP/1.1 200 OK  X-Backend: B
+13:02:13  HTTP/1.1 200 OK  X-Backend: B
+13:02:14  HTTP/1.1 200 OK  X-Backend: B
+13:02:15  HTTP/1.1 200 OK  X-Backend: B
+13:02:16  HTTP/1.1 200 OK  X-Backend: B
+13:02:18  HTTP/1.1 200 OK  X-Backend: B
+13:02:19  HTTP/1.1 200 OK  X-Backend: B
+13:02:20  HTTP/1.1 200 OK  X-Backend: B
+13:02:21  HTTP/1.1 200 OK  X-Backend: B
+13:02:22  HTTP/1.1 200 OK  X-Backend: B
+13:02:23  HTTP/1.1 200 OK  X-Backend: B
+13:02:24  HTTP/1.1 200 OK  X-Backend: B
+13:02:26  HTTP/1.1 200 OK  X-Backend: B
+13:02:27  HTTP/1.1 200 OK  X-Backend: B
+13:02:28  HTTP/1.1 200 OK  X-Backend: B
+13:02:29  HTTP/1.1 200 OK  X-Backend: B
+13:02:30  HTTP/1.1 200 OK  X-Backend: B
+13:02:31  HTTP/1.1 200 OK  X-Backend: B
+13:02:32  HTTP/1.1 200 OK  X-Backend: B
+13:02:33  HTTP/1.1 200 OK  X-Backend: B
+13:02:35  HTTP/1.1 200 OK  X-Backend: B
+13:02:36  HTTP/1.1 200 OK  X-Backend: B
+13:02:37  HTTP/1.1 200 OK  X-Backend: B
+13:02:38  HTTP/1.1 200 OK  X-Backend: B
+13:02:39  HTTP/1.1 200 OK  X-Backend: B
+13:02:40  HTTP/1.1 200 OK  X-Backend: B
+13:02:41  HTTP/1.1 200 OK  X-Backend: B
+13:02:42  HTTP/1.1 200 OK  X-Backend: B
+13:02:44  HTTP/1.1 200 OK  X-Backend: B
+13:02:45  HTTP/1.1 200 OK  X-Backend: B
+13:02:46  HTTP/1.1 200 OK  X-Backend: B
+13:02:47  HTTP/1.1 200 OK  X-Backend: B
+13:02:48  HTTP/1.1 200 OK  X-Backend: B
+13:02:49  HTTP/1.1 200 OK  X-Backend: B
+13:02:50  HTTP/1.1 200 OK  X-Backend: B
+13:02:52  HTTP/1.1 200 OK  X-Backend: B
+13:02:53  HTTP/1.1 200 OK  X-Backend: B
+13:02:54  HTTP/1.1 200 OK  X-Backend: B
+13:02:55  HTTP/1.1 200 OK  X-Backend: B
+13:02:56  HTTP/1.1 200 OK  X-Backend: B
+13:02:57  HTTP/1.1 200 OK  X-Backend: B
+13:02:58  HTTP/1.1 200 OK  X-Backend: B
+13:02:59  HTTP/1.1 200 OK  X-Backend: B
+13:03:00  HTTP/1.1 200 OK  X-Backend: B
+13:03:02  HTTP/1.1 200 OK  X-Backend: B
+13:03:03  HTTP/1.1 200 OK  X-Backend: B
+13:03:04  HTTP/1.1 200 OK  X-Backend: B
+13:03:05  HTTP/1.1 200 OK  X-Backend: B
+13:03:06  HTTP/1.1 200 OK  X-Backend: B
+13:03:07  HTTP/1.1 200 OK  X-Backend: B
+13:03:09  HTTP/1.1 200 OK  X-Backend: B
+13:03:10  HTTP/1.1 200 OK  X-Backend: B
+13:03:11  HTTP/1.1 200 OK  X-Backend: B
+13:03:12  HTTP/1.1 200 OK  X-Backend: B
+13:03:13  HTTP/1.1 200 OK  X-Backend: B
+13:03:14  HTTP/1.1 200 OK  X-Backend: B
+13:03:15  HTTP/1.1 200 OK  X-Backend: B
+13:03:16  HTTP/1.1 200 OK  X-Backend: B
+13:03:18  HTTP/1.1 200 OK  X-Backend: B
+13:03:19  HTTP/1.1 200 OK  X-Backend: B
+13:03:20  HTTP/1.1 200 OK  X-Backend: B
+13:03:21  HTTP/1.1 200 OK  X-Backend: B
+13:03:22  HTTP/1.1 200 OK  X-Backend: B
+13:03:23  HTTP/1.1 200 OK  X-Backend: B
+13:03:24  HTTP/1.1 200 OK  X-Backend: B
+13:03:25  HTTP/1.1 200 OK  X-Backend: B
+13:03:27  HTTP/1.1 200 OK  X-Backend: B
+13:03:28  HTTP/1.1 200 OK  X-Backend: B
+13:03:29  HTTP/1.1 200 OK  X-Backend: B
+13:03:30  HTTP/1.1 200 OK  X-Backend: B
+13:03:31  HTTP/1.1 200 OK  X-Backend: B
+13:03:32  HTTP/1.1 200 OK  X-Backend: B
+13:03:33  HTTP/1.1 200 OK  X-Backend: B
+13:03:35  HTTP/1.1 200 OK  X-Backend: B
+13:03:36  HTTP/1.1 200 OK  X-Backend: B
+13:03:37  HTTP/1.1 200 OK  X-Backend: B
+13:03:38  HTTP/1.1 200 OK  X-Backend: B
+13:03:39  HTTP/1.1 200 OK  X-Backend: B
+13:03:40  HTTP/1.1 200 OK  X-Backend: B
+13:03:41  HTTP/1.1 200 OK  X-Backend: B
+13:03:42  HTTP/1.1 200 OK  X-Backend: B
+13:03:44  HTTP/1.1 200 OK  X-Backend: B
+13:03:45  HTTP/1.1 200 OK  X-Backend: B
+13:03:46  HTTP/1.1 200 OK  X-Backend: B
+13:03:47  HTTP/1.1 200 OK  X-Backend: B
+13:03:48  HTTP/1.1 200 OK  X-Backend: B
+13:03:49  HTTP/1.1 200 OK  X-Backend: B
+13:03:50  HTTP/1.1 200 OK  X-Backend: B
+13:03:51  HTTP/1.1 200 OK  X-Backend: B
+13:03:53  HTTP/1.1 200 OK  X-Backend: B
+13:03:54  HTTP/1.1 200 OK  X-Backend: B
+13:03:55  HTTP/1.1 200 OK  X-Backend: B
+13:03:56  HTTP/1.1 200 OK  X-Backend: B
+13:03:57  HTTP/1.1 200 OK  X-Backend: B
+13:03:58  HTTP/1.1 200 OK  X-Backend: B
+13:03:59  HTTP/1.1 200 OK  X-Backend: B
+13:04:01  HTTP/1.1 200 OK  X-Backend: B
+13:04:02  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:03  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:04  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:05  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:06  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:07  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:08  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:09  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:10  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:12  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:13  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:14  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:15  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:16  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:17  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:18  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:19  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:20  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
+13:04:21  HTTP/1.1 502 Bad Gateway  x-backend: (none - likely 502)
