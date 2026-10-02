@@ -1,0 +1,56 @@
+=== TASK E: VERIFIED TLS 1.3 HANDSHAKE & HTTPS REQUEST EVIDENCE ===
+Date/Time: $(date)
+Target: https://app.cnteam.test:8443/api/status
+CA Certificate: config/app.cnteam.test.crt (No -k / No Insecure Flag)
+
+* Added app.cnteam.test:8443:10.7.14.242 to DNS cache
+* Hostname app.cnteam.test was found in DNS cache
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 10.7.14.242:8443...
+* Connected to app.cnteam.test (10.7.14.242) port 8443 (#0)
+* ALPN: offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [320 bytes data]
+*  CAfile: config/app.cnteam.test.crt
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* (304) (IN), TLS handshake, Unknown (8):
+{ [53 bytes data]
+* (304) (IN), TLS handshake, Certificate (11):
+{ [818 bytes data]
+* (304) (IN), TLS handshake, CERT verify (15):
+{ [264 bytes data]
+* (304) (IN), TLS handshake, Finished (20):
+{ [36 bytes data]
+* (304) (OUT), TLS handshake, Finished (20):
+} [36 bytes data]
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=app.cnteam.test
+*  start date: Oct  2 06:19:53 2026 GMT
+*  expire date: Oct  2 06:19:53 2027 GMT
+*  subjectAltName: host "app.cnteam.test" matched cert's "app.cnteam.test"
+*  issuer: CN=app.cnteam.test
+*  SSL certificate verify ok.
+* using HTTP/1.1
+> GET /api/status HTTP/1.1
+> Host: app.cnteam.test:8443
+> User-Agent: curl/8.1.2
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: nginx/1.31.6
+< Date: Fri, 02 Oct 2026 06:59:35 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Connection: keep-alive
+< X-Backend: B
+< Cache-Control: max-age=60
+< 
+{ [43 bytes data]
+100    32    0    32    0     0    425      0 --:--:-- --:--:-- --:--:--   426
+* Connection #0 to host app.cnteam.test left intact
+{"backend": "B", "status": "ok"}

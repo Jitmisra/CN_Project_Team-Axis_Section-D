@@ -1,0 +1,45 @@
+=== BACKEND A VERIFICATION EVIDENCE ===
+Date/Time: Fri Oct  2 12:16:00 IST 2026
+
+--- 1. Testing GET / (Root Endpoint) ---
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Fri, 02 Oct 2026 06:46:00 GMT
+Content-Type: text/plain
+X-Backend: A
+Cache-Control: max-age=60
+
+Backend A is running
+
+--- 2. Testing GET /api/status (JSON Status Endpoint) ---
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Fri, 02 Oct 2026 06:46:00 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+
+{"backend": "A", "status": "ok"}
+--- 3. Testing LAN IP Reachability (http://10.7.18.246:3001/api/status) ---
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Fri, 02 Oct 2026 06:46:00 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+
+{"backend": "A", "status": "ok"}
+--- 4. Testing 404 Handler (http://localhost:3001/invalid-path) ---
+HTTP/1.0 404 Not Found
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Fri, 02 Oct 2026 06:46:00 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+
+{"error":"not found"}
+--- 5. Specific Header Checks ---
+X-Backend Header: X-Backend: A
+Cache-Control Header: Cache-Control: max-age=60
+Content-Type Header: Content-Type: application/json
+

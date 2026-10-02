@@ -1,0 +1,26 @@
+=== BACKEND A ACCESS LOG EVIDENCE SHOWING PROXIED REQUESTS FROM MAC 2 ===
+Date/Time: $(date)
+Local Server: 0.0.0.0:3001
+Client Address: 10.7.14.242 (Mac 2 Nginx Reverse Proxy)
+
+Log entries:
+[Backend A] 10.7.8.82 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.8.82 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "HEAD /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -
+[Backend A] 10.7.14.242 - "GET /api/status HTTP/1.1" 200 -

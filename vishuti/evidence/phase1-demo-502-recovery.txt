@@ -1,0 +1,12 @@
+=== PHASE 1 FAILURE DEMO: 502 BAD GATEWAY RECOVERY ===
+Date/Time: $(date)
+Action: Backend A restarted via ./scripts/start-backend.sh (PID: $(cat backend_a.pid))
+Port 3001: Active (0.0.0.0:3001)
+
+Verification against Edge Load Balancer (https://10.7.14.242:8443/api/status):
+Request 1: HTTP/1.1 200 OK | X-Backend: A
+Request 2: HTTP/1.1 200 OK | X-Backend: A
+Request 3: HTTP/1.1 200 OK | X-Backend: A
+Request 4: HTTP/1.1 200 OK | X-Backend: A
+Request 5: HTTP/1.1 200 OK | X-Backend: A
+Request 6: HTTP/1.1 200 OK | X-Backend: A

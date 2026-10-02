@@ -1,0 +1,28 @@
+=== MAC 3 (VISHUTI) NETWORK CONFIGURATION EVIDENCE ===
+Date/Time: Fri Oct  2 12:14:58 IST 2026
+
+--- 1. IPv4 Address (en0) ---
+IP: 10.7.18.246
+
+--- 2. Default Gateway ---
+default            10.7.0.1           UGScg             en0       
+default                                 fe80::%utun0                    UGcIg           utun0       
+default                                 fe80::%utun1                    UGcIg           utun1       
+default                                 fe80::%utun2                    UGcIg           utun2       
+
+--- 3. Interface Details (en0) ---
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	options=6463<RXCSUM,TXCSUM,TSO4,TSO6,CHANNEL_IO,PARTIAL_CSUM,ZEROINVERT_CSUM>
+	ether 10:9f:41:a9:20:0d 
+	inet6 fe80::6b:9431:1e62:6b9d%en0 prefixlen 64 secured scopeid 0xc 
+	inet 10.7.18.246 netmask 0xffffe000 broadcast 10.7.31.255
+	nd6 options=201<PERFORMNUD,DAD>
+	media: autoselect
+	status: active
+
+--- 4. MAC Address (Hardware Address) ---
+10:9f:41:a9:20:0d
+
+--- 5. Summary Row for Shared IP Table ---
+| Mac 3 | Backend A | 10.7.18.246 | 255.255.224.0 (/19) | 10.7.0.1 | en0 | 10:9f:41:a9:20:0d |
+

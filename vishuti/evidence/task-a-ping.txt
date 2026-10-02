@@ -1,0 +1,35 @@
+=== MAC 3 (VISHUTI) PING TEST EVIDENCE ===
+Date/Time: Fri Oct  2 12:14:59 IST 2026
+
+--- 1. Ping Default Gateway (10.7.0.1) ---
+PING 10.7.0.1 (10.7.0.1): 56 data bytes
+64 bytes from 10.7.0.1: icmp_seq=0 ttl=64 time=3.101 ms
+64 bytes from 10.7.0.1: icmp_seq=1 ttl=64 time=3.908 ms
+64 bytes from 10.7.0.1: icmp_seq=2 ttl=64 time=4.153 ms
+
+--- 10.7.0.1 ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 3.101/3.721/4.153/0.449 ms
+
+--- 2. Ping Mac 1 (Kartikey - DNS: 10.7.8.82) ---
+PING 10.7.8.82 (10.7.8.82): 56 data bytes
+64 bytes from 10.7.8.82: icmp_seq=0 ttl=64 time=28.187 ms
+64 bytes from 10.7.8.82: icmp_seq=1 ttl=64 time=69.435 ms
+64 bytes from 10.7.8.82: icmp_seq=2 ttl=64 time=16.433 ms
+
+--- 10.7.8.82 ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 16.433/38.018/69.435/22.727 ms
+
+--- 3. Ping Mac 2 (Agnik - Edge/Nginx: 10.7.14.242) ---
+PING 10.7.14.242 (10.7.14.242): 56 data bytes
+64 bytes from 10.7.14.242: icmp_seq=0 ttl=64 time=80.094 ms
+64 bytes from 10.7.14.242: icmp_seq=1 ttl=64 time=7.736 ms
+64 bytes from 10.7.14.242: icmp_seq=2 ttl=64 time=7.142 ms
+
+--- 10.7.14.242 ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 7.142/31.657/80.094/34.251 ms
+
+--- 4. Mac 4 (Anwesha) IP not yet configured in team.env (Skipping ping) ---
+
