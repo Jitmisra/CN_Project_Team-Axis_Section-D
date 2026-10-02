@@ -1,0 +1,30 @@
+=== Mac1 (Kartikey/DNS) (10.7.8.82) ===
+PING 10.7.8.82 (10.7.8.82): 56 data bytes
+64 bytes from 10.7.8.82: icmp_seq=0 ttl=64 time=66.154 ms
+64 bytes from 10.7.8.82: icmp_seq=1 ttl=64 time=139.507 ms
+64 bytes from 10.7.8.82: icmp_seq=2 ttl=64 time=54.948 ms
+
+--- 10.7.8.82 ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 54.948/86.870/139.507/37.500 ms
+[Mac1 (Kartikey/DNS)] OK
+=== Mac3 (Vishuti/Backend A) (10.7.18.246) ===
+PING 10.7.18.246 (10.7.18.246): 56 data bytes
+64 bytes from 10.7.18.246: icmp_seq=0 ttl=64 time=75.548 ms
+64 bytes from 10.7.18.246: icmp_seq=1 ttl=64 time=107.966 ms
+64 bytes from 10.7.18.246: icmp_seq=2 ttl=64 time=150.942 ms
+
+--- 10.7.18.246 ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 75.548/111.485/150.942/30.880 ms
+[Mac3 (Vishuti/Backend A)] OK
+=== Mac4 (Anwesha/Backend B) (10.7.5.197) ===
+PING 10.7.5.197 (10.7.5.197): 56 data bytes
+64 bytes from 10.7.5.197: icmp_seq=0 ttl=64 time=37.141 ms
+64 bytes from 10.7.5.197: icmp_seq=1 ttl=64 time=17.270 ms
+64 bytes from 10.7.5.197: icmp_seq=2 ttl=64 time=73.038 ms
+
+--- 10.7.5.197 ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 17.270/42.483/73.038/23.078 ms
+[Mac4 (Anwesha/Backend B)] OK

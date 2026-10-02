@@ -1,0 +1,52 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            5c:1e:9f:f2:03:f5:20:8e:8e:87:f7:33:59:2c:8f:5e:81:14:64:08
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=app.cnteam.test
+        Validity
+            Not Before: Oct  2 06:19:53 2026 GMT
+            Not After : Oct  2 06:19:53 2027 GMT
+        Subject: CN=app.cnteam.test
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    b1:4d:2c:f5:47:1d:d0:58:c9:eb:79:c5:19:1c:f7:b5:
+                    67:dd:9e:db:a1:ba:57:f7:a8:f1:3f:c3:6b:5e:2c:07:
+                    7a:a3:0d:f9:14:08:3a:a0:a9:e0:e1:da:21:63:8a:de:
+                    c0:46:02:2d:27:6d:1c:6e:87:10:ce:c5:e3:fb:5f:f9:
+                    d9:ec:14:7d:c3:15:dd:c1:a9:b2:3a:8a:03:fd:51:15:
+                    ec:34:28:ff:4c:cc:02:db:32:72:64:0b:62:f0:29:bd:
+                    11:92:10:34:a3:6f:4a:37:fa:73:ef:b9:cf:7b:18:c2:
+                    5c:b3:14:73:c8:4c:74:6b:72:7b:36:87:96:5d:99:05:
+                    85:90:43:ca:3e:18:35:55:b1:e8:6b:1e:34:db:59:cc:
+                    27:e3:2f:26:af:00:70:30:6a:c9:0a:a5:fb:da:b3:c2:
+                    ee:39:fe:c1:da:73:1f:b0:47:f8:59:d2:09:45:22:91:
+                    a2:c4:72:cb:77:d0:9d:0c:f5:cd:47:94:03:fc:93:de:
+                    c3:73:1f:61:33:38:4b:6b:f2:9f:f1:89:f4:2d:aa:27:
+                    ae:1b:00:f9:8a:a8:ba:a4:7f:c4:87:31:02:ab:59:2f:
+                    00:be:c2:8a:7c:ce:04:e9:d2:db:bc:ba:a0:fe:95:81:
+                    0a:03:63:87:3d:20:16:e0:7f:7f:86:cb:aa:e6:4a:b7
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Subject Key Identifier: 
+                4D:8D:D5:1C:AF:27:40:73:84:00:93:77:11:29:F7:F7:79:CD:E9:58
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+            X509v3 Subject Alternative Name: 
+                DNS:app.cnteam.test, DNS:api.cnteam.test
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        a4:63:c0:90:9a:8c:57:aa:e4:14:15:91:9b:3a:d9:29:30:c7:cb:5e:59:13:62:de:
+        e6:d9:a0:89:3b:c9:87:07:23:65:cb:48:0e:a3:2d:09:16:bc:2d:bf:af:b6:71:0e:
+        ae:d5:d7:90:d6:17:51:37:be:65:c3:55:0b:98:2b:1d:cd:38:72:de:3e:75:a0:01:
+        b2:9c:29:50:e0:5b:1f:ad:87:05:d0:05:02:a3:51:5b:c3:80:9d:fa:2f:b9:50:32:
+        c0:60:54:f6:ee:e1:7d:c5:81:29:c2:43:60:cb:cb:fd:81:71:30:9e:94:40:20:44:
+        cd:77:be:c0:12:d3:c7:06:88:c1:ea:05:0d:c8:8a:32:c4:f2:36:40:f7:76:9f:25:
+        b1:89:f8:82:a7:df:9d:95:cf:07:b6:89:9b:0e:c0:ca:f8:ed:12:60:fe:b2:68:dd:
+        07:3c:b4:1c:06:af:ec:1e:88:fe:ac:9b:84:aa:9e:a6:c1:d8:c0:e0:c8:84:62:8e:
+        3a:4a:24:db:af:e2:d1:2a:6e:7e:b9:ac:da:3a:d9:5d:0f:18:61:c8:6e:b3:72:fe:
+        78:ec:10:3f:6a:56:3a:43:a7:a1:d9:10:73:06:44:61:3b:64:e6:3a:8f:a8:fd:22:
+        96:72:86:b3:60:c5:5d:32:36:21:9e:d3:20:3c:40:4a
