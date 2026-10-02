@@ -1,0 +1,17 @@
+# ==== CN project -- BACKUP private DNS (Mac 4, Anwesha) ====
+# Records MUST be identical to Mac 1's primary.
+# Install: brew install dnsmasq
+#          echo 'conf-dir=/opt/homebrew/etc/dnsmasq.d,*.conf' >> /opt/homebrew/etc/dnsmasq.conf
+#          cp dnsmasq-mac4-backup.conf /opt/homebrew/etc/dnsmasq.d/cnteam.conf
+#          sudo brew services start dnsmasq
+#          dig @@MAC4_IP@ app.@TEAM@.test     # must print @MAC2_IP@
+address=/app.@TEAM@.test/@MAC2_IP@
+address=/api.@TEAM@.test/@MAC2_IP@
+listen-address=127.0.0.1,@MAC4_IP@
+bind-interfaces
+no-resolv
+server=@UPSTREAM_DNS@
+no-hosts
+local-ttl=30
+log-queries
+log-facility=/opt/homebrew/var/log/dnsmasq-cnteam.log

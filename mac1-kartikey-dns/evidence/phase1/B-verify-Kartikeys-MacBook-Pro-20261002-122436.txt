@@ -1,0 +1,102 @@
+
+[12:24:36] Kartikeys-MacBook-Pro$ networksetup -getdnsservers Wi-Fi
+10.7.8.82
+
+[12:24:36] Kartikeys-MacBook-Pro$ dig app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> app.cnteam.test
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 33233
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;app.cnteam.test.		IN	A
+
+;; ANSWER SECTION:
+app.cnteam.test.	0	IN	A	10.7.14.242
+
+;; Query time: 4 msec
+;; SERVER: 10.7.8.82#53(10.7.8.82)
+;; WHEN: Fri Oct 02 12:24:36 IST 2026
+;; MSG SIZE  rcvd: 60
+
+
+[12:24:36] Kartikeys-MacBook-Pro$ dig @10.7.8.82 api.cnteam.test +noall +answer +comments
+
+; <<>> DiG 9.10.6 <<>> @10.7.8.82 api.cnteam.test +noall +answer +comments
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 45646
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; ANSWER SECTION:
+api.cnteam.test.	0	IN	A	10.7.14.242
+
+
+[12:24:36] Kartikeys-MacBook-Pro$ nslookup app.cnteam.test
+Server:		10.7.8.82
+Address:	10.7.8.82#53
+
+Name:	app.cnteam.test
+Address: 10.7.14.242
+
+
+[12:24:36] Kartikeys-MacBook-Pro$ dscacheutil -q host -a name app.cnteam.test
+name: app.cnteam.test
+ip_address: 10.7.14.242
+
+
+[12:24:36] Kartikeys-MacBook-Pro$ dig +short @10.7.8.82 example.com
+104.20.23.154
+172.66.147.243
+
+[12:24:36] Kartikeys-MacBook-Pro$ curl -sS -k -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/1.1 200 OK
+Server: nginx/1.31.6
+Date: Fri, 02 Oct 2026 06:54:36 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Backend: B
+Cache-Control: max-age=60
+
+{"backend": "B", "status": "ok"}
+[12:24:36] Kartikeys-MacBook-Pro$ curl -sS -k -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/1.1 200 OK
+Server: nginx/1.31.6
+Date: Fri, 02 Oct 2026 06:54:37 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Backend: A
+Cache-Control: max-age=60
+
+{"backend": "A", "status": "ok"}
+[12:24:37] Kartikeys-MacBook-Pro$ curl -sS -k -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/1.1 200 OK
+Server: nginx/1.31.6
+Date: Fri, 02 Oct 2026 06:54:37 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Backend: B
+Cache-Control: max-age=60
+
+{"backend": "B", "status": "ok"}
+[12:24:37] Kartikeys-MacBook-Pro$ curl -sS -k -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/1.1 200 OK
+Server: nginx/1.31.6
+Date: Fri, 02 Oct 2026 06:54:37 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Backend: A
+Cache-Control: max-age=60
+
+{"backend": "A", "status": "ok"}
