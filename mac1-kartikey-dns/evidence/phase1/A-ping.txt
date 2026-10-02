@@ -1,0 +1,33 @@
+
+[12:21:32] Kartikeys-MacBook-Pro$ ping -c 4 10.7.14.242
+PING 10.7.14.242 (10.7.14.242): 56 data bytes
+64 bytes from 10.7.14.242: icmp_seq=0 ttl=64 time=34.942 ms
+64 bytes from 10.7.14.242: icmp_seq=1 ttl=64 time=77.455 ms
+64 bytes from 10.7.14.242: icmp_seq=2 ttl=64 time=9.039 ms
+64 bytes from 10.7.14.242: icmp_seq=3 ttl=64 time=13.119 ms
+
+--- 10.7.14.242 ping statistics ---
+4 packets transmitted, 4 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 9.039/33.639/77.455/27.147 ms
+
+[12:21:35] Kartikeys-MacBook-Pro$ ping -c 4 10.7.18.246
+PING 10.7.18.246 (10.7.18.246): 56 data bytes
+64 bytes from 10.7.18.246: icmp_seq=0 ttl=64 time=67.650 ms
+64 bytes from 10.7.18.246: icmp_seq=1 ttl=64 time=120.552 ms
+64 bytes from 10.7.18.246: icmp_seq=2 ttl=64 time=106.167 ms
+64 bytes from 10.7.18.246: icmp_seq=3 ttl=64 time=19.763 ms
+
+--- 10.7.18.246 ping statistics ---
+4 packets transmitted, 4 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 19.763/78.533/120.552/39.056 ms
+
+[12:21:38] Kartikeys-MacBook-Pro$ ping -c 4 10.7.5.197
+PING 10.7.5.197 (10.7.5.197): 56 data bytes
+64 bytes from 10.7.5.197: icmp_seq=0 ttl=64 time=69.901 ms
+64 bytes from 10.7.5.197: icmp_seq=1 ttl=64 time=85.040 ms
+64 bytes from 10.7.5.197: icmp_seq=2 ttl=64 time=8.281 ms
+64 bytes from 10.7.5.197: icmp_seq=3 ttl=64 time=33.734 ms
+
+--- 10.7.5.197 ping statistics ---
+4 packets transmitted, 4 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 8.281/49.239/85.040/30.111 ms

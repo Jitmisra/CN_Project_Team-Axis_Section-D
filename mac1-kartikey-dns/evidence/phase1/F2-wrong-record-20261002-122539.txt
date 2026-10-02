@@ -1,0 +1,54 @@
+
+[12:25:39] Kartikeys-MacBook-Pro$ dig @10.7.8.82 app.cnteam.test +noall +answer +comments
+
+; <<>> DiG 9.10.6 <<>> @10.7.8.82 app.cnteam.test +noall +answer +comments
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 64621
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; ANSWER SECTION:
+app.cnteam.test.	0	IN	A	10.7.14.242
+
+
+[12:25:39] Kartikeys-MacBook-Pro$ curl -sS -k -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/1.1 200 OK
+Server: nginx/1.31.6
+Date: Fri, 02 Oct 2026 06:55:39 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Backend: A
+Cache-Control: max-age=60
+
+{"backend": "A", "status": "ok"}
+[12:25:41] Kartikeys-MacBook-Pro$ grep ^address= /opt/homebrew/etc/dnsmasq.d/cnteam.conf
+address=/app.cnteam.test/10.7.18.246
+address=/api.cnteam.test/10.7.14.242
+
+[12:25:41] Kartikeys-MacBook-Pro$ dig @10.7.8.82 app.cnteam.test +noall +answer +comments
+
+; <<>> DiG 9.10.6 <<>> @10.7.8.82 app.cnteam.test +noall +answer +comments
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 12837
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; ANSWER SECTION:
+app.cnteam.test.	0	IN	A	10.7.18.246
+
+
+[12:25:41] Kartikeys-MacBook-Pro$ curl -sS -k -i --max-time 5 https://app.cnteam.test:8443/api/status
+curl: (7) Failed to connect to app.cnteam.test port 8443 after 1011 ms: Couldn't connect to server
+
+[12:25:42] Kartikeys-MacBook-Pro$ dig +short @10.7.8.82 api.cnteam.test
+10.7.14.242
+
+[12:25:44] Kartikeys-MacBook-Pro$ dig +short @10.7.8.82 app.cnteam.test
+10.7.14.242

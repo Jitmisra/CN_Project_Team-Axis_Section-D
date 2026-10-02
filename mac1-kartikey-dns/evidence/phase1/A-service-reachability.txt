@@ -1,0 +1,25 @@
+[12:22:05] Mac 1 direct reachability check
+$ curl -i http://10.7.18.246:3001/api/status
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Fri, 02 Oct 2026 06:52:05 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+
+{"backend": "A", "status": "ok"}
+$ curl -i http://10.7.5.197:3002/api/status
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.6
+Date: Fri, 02 Oct 2026 06:52:05 GMT
+Content-Type: application/json
+X-Backend: B
+Cache-Control: max-age=60
+
+{"backend": "B", "status": "ok"}
+$ curl -k -i -H 'Host: app.cnteam.test' https://10.7.14.242:8443/api/status
+HTTP/1.1 200 OK
+Server: nginx/1.31.6
+Date: Fri, 02 Oct 2026 06:52:05 GMT
+Content-Type: application/json
+Transfer-Encoding: chunked

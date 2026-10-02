@@ -1,0 +1,33 @@
+$ curl -i https://app.cnteam.test:8443/api/status   (no -k)
+HTTP/1.1 200 OK
+X-Backend: B
+Cache-Control: max-age=60
+{"backend": "B", "status": "ok"}
+$ curl -i https://app.cnteam.test:8443/api/status   (no -k)
+HTTP/1.1 200 OK
+X-Backend: A
+Cache-Control: max-age=60
+{"backend": "A", "status": "ok"}
+$ curl -i https://app.cnteam.test:8443/api/status   (no -k)
+HTTP/1.1 200 OK
+X-Backend: B
+Cache-Control: max-age=60
+{"backend": "B", "status": "ok"}
+$ curl -i https://app.cnteam.test:8443/api/status   (no -k)
+HTTP/1.1 200 OK
+X-Backend: A
+Cache-Control: max-age=60
+{"backend": "A", "status": "ok"}
+
+$ curl -v (TLS summary)
+* Connected to api.cnteam.test (10.7.14.242) port 8443
+* (304) (IN), TLS handshake, CERT verify (15):
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+*  subject: CN=app.cnteam.test
+*  expire date: Oct  2 06:19:53 2027 GMT
+*  subjectAltName: host "api.cnteam.test" matched cert's "api.cnteam.test"
+*  issuer: CN=app.cnteam.test
+*  SSL certificate verify ok.
+* using HTTP/1.x
+> GET /api/status HTTP/1.1
+< HTTP/1.1 200 OK

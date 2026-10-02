@@ -1,0 +1,35 @@
+
+[12:25:20] Kartikeys-MacBook-Pro$ networksetup -getdnsservers Wi-Fi
+10.7.8.82
+
+[12:25:20] Kartikeys-MacBook-Pro$ dig +short app.cnteam.test
+10.7.14.242
+
+[12:25:20] Kartikeys-MacBook-Pro$ networksetup -getdnsservers Wi-Fi
+192.0.2.53
+
+[12:25:20] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> +time=2 +tries=1 app.cnteam.test
+;; global options: +cmd
+;; connection timed out; no servers could be reached
+
+[12:25:22] Kartikeys-MacBook-Pro$ nslookup -timeout=2 app.cnteam.test
+;; connection timed out; no servers could be reached
+
+
+[12:25:28] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 +short google.com
+;; connection timed out; no servers could be reached
+
+[12:25:30] Kartikeys-MacBook-Pro$ ping -c 3 10.7.14.242
+PING 10.7.14.242 (10.7.14.242): 56 data bytes
+64 bytes from 10.7.14.242: icmp_seq=0 ttl=64 time=12.702 ms
+64 bytes from 10.7.14.242: icmp_seq=1 ttl=64 time=8.345 ms
+64 bytes from 10.7.14.242: icmp_seq=2 ttl=64 time=11.163 ms
+
+--- 10.7.14.242 ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 8.345/10.737/12.702/1.804 ms
+
+[12:25:32] Kartikeys-MacBook-Pro$ curl -sS -k -o /dev/null -w HTTPS to raw IP: %{http_code}\n --max-time 5 https://10.7.14.242:8443/
+HTTPS to raw IP: 200
