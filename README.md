@@ -24,6 +24,33 @@ Client → DNS query (Mac 1) → HTTPS request (Mac 2 / nginx)
     → Backend A (Mac 3, port 3001)  or  Backend B (Mac 4, port 3002)
 ```
 
+## How to run the backends
+
+No external dependencies — both backends use Python's built-in `http.server` module.
+
+**Backend A (Mac 3 — Vishuti, port 3001):**
+```bash
+python3 backend_a/backend_a.py
+```
+
+**Backend B (Mac 4 — Anwesha, port 3002):**
+```bash
+python3 backend_b/backend_b.py
+```
+
+**Quick test** (from any machine on the LAN):
+```bash
+# Direct test (replace IP with the backend's IP)
+curl http://10.7.18.246:3001/api/status   # Backend A
+curl http://10.7.5.197:3002/api/status    # Backend B
+
+# Through the full stack (DNS + TLS + load balancer)
+curl https://app.cnteam.test:8443/api/status
+```
+
+> If you get `OSError: Address already in use`, kill the old process first:
+> `kill -9 $(lsof -t -i:3001)` or `kill -9 $(lsof -t -i:3002)`
+
 ## Status: Phase 1 complete (build + verify + all 5 failure demos)
 All 4 machines are built, live, and cross-verified end to end:
 - DNS resolves `app.cnteam.test` → Mac 2 from multiple clients (no `.local`, uses `.test`).

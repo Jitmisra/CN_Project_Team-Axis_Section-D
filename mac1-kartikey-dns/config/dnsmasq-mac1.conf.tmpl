@@ -6,9 +6,9 @@
 address=/app.@TEAM@.test/@MAC2_IP@
 address=/api.@TEAM@.test/@MAC2_IP@
 
-# --- Where to listen: loopback (Mac 1 as its own client) + LAN IP (teammates)
-listen-address=127.0.0.1,@MAC1_IP@
-bind-interfaces
+# --- Where to listen: All interfaces
+listen-address=0.0.0.0
+interface=en0
 
 # --- Everything that is not ours goes upstream, so clients can still browse.
 no-resolv
