@@ -1,7 +1,7 @@
 # Phase 2 report: Kartikey's paragraphs (Ext A + Ext B)
 
-For Agnik to paste into `PHASE2_REPORT.md` §4. Fill each `[__]` from the evidence files after the demo, then delete
-this note. **Don't submit placeholders.**
+For Agnik to paste into `PHASE2_REPORT.md` §2 and §4. Every number below comes from a run on 2026-11-22; evidence
+files are in `mac1-kartikey-dns/evidence/phase2/`.
 
 ## Results rows (§2 table)
 
