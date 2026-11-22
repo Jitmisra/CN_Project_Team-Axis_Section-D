@@ -37,7 +37,7 @@
 | C: client → 3001/3002 direct | blocked (refused / timeout) | Mac 1 → 10.7.19.42:3002: `Operation timed out` (pf drop). 3001 on Mac 3: _pending Kartikey's test_ | ✅ (3002) | Kartikey's `C-client-blocked.txt` |
 | C: edge → 3001/3002 | allowed, LB alternates | Mac 2 → 3001 and 3002 both open, direct HTTP 200, through the edge A B A B A B | ✅ | `mac2-agnik-nginx-edge/evidence/phase2/C-edge-still-allowed-20261122-185417.txt` |
 | C: rollback | direct access restored | | | |
-| D: Backend A stopped | 100% served by B, 0 errors | A down ~18:48:12–18:48:57 (46 s): every request served by B. **252/252 requests HTTP 200** over 5 min. nginx re-probed A at 18:48:14, :29, :44 (each `Connection refused`) and retried on B **inside the same request** | ✅ | `mac2-agnik-nginx-edge/evidence/phase2/D-watch-agniks-MacBook-Pro-20261122-184729.txt`, `D-edge-logs-20261122-184728.txt` |
+| D: Backend A stopped | 100% served by B, 0 errors | A down 18:48:13–18:48:59 by Vishuti's clock (46 s; watcher on Mac 2 saw B-only 18:48:12–18:48:57, ~1 s clock skew): every request served by B. **252/252 requests HTTP 200** over 5 min. nginx re-probed A at 18:48:14, :29, :44 (each `Connection refused`) and retried on B **inside the same request** | ✅ | `mac2-agnik-nginx-edge/evidence/phase2/D-watch-agniks-MacBook-Pro-20261122-184729.txt`, `D-edge-logs-20261122-184728.txt` |
 | D: Backend A restarted | alternation resumes in ~10–15 s | A served again at 18:48:58, A/B alternation resumed straight away | ✅ | same files |
 | E: cutover to standby | cached clients on old edge ≤30 s, then standby | | | |
 | E: primary edge stopped after cutover | no client impact | | | |
