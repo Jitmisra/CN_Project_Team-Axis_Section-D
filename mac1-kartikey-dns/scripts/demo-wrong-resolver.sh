@@ -7,12 +7,12 @@ need MAC2_IP BOGUS_DNS
 f=phase1/F1-wrong-resolver-$STAMP.txt
 before="$(networksetup -getdnsservers "$NETSVC" | tr '\n' ' ')"
 restore() { note "Restoring resolvers: $before"
-  if [[ "$before" == *"aren't any"* ]]; then sudo networksetup -setdnsservers "$NETSVC" Empty
-  else sudo networksetup -setdnsservers "$NETSVC" $before; fi; flush_cache; }
+  if [[ "$before" == *"aren't any"* ]]; then networksetup -setdnsservers "$NETSVC" Empty
+  else networksetup -setdnsservers "$NETSVC" $before; fi; flush_cache; }
 trap restore EXIT
 note "BEFORE"; ev "$f" networksetup -getdnsservers "$NETSVC"; ev "$f" dig +short "$APP"
 note "BREAK: resolver -> $BOGUS_DNS (not a DNS server)"
-sudo networksetup -setdnsservers "$NETSVC" "$BOGUS_DNS"; flush_cache
+networksetup -setdnsservers "$NETSVC" "$BOGUS_DNS"; flush_cache
 ev "$f" networksetup -getdnsservers "$NETSVC"
 ev "$f" dig +time=2 +tries=1 "$APP"           # ;; connection timed out; no servers could be reached
 ev "$f" nslookup -timeout=2 "$APP"

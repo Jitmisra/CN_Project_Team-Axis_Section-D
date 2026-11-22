@@ -1,0 +1,143 @@
+
+################ run 20261122-193817 on Kartikeys-MacBook-Pro ################
+== PART 1: both DNS servers stopped ==
+
+[19:38:17] Kartikeys-MacBook-Pro$ dns_stop
+[19:38:28] (observed after 10 s: Mac 4 DNS stopped (no answer))
+
+[19:38:28] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 @10.7.22.176 app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> +time=2 +tries=1 @10.7.22.176 app.cnteam.test
+; (1 server found)
+;; global options: +cmd
+;; connection timed out; no servers could be reached
+
+[19:38:30] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 @10.7.19.42 app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> +time=2 +tries=1 @10.7.19.42 app.cnteam.test
+; (1 server found)
+;; global options: +cmd
+;; connection timed out; no servers could be reached
+
+[19:38:32] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 8 https://app.cnteam.test:8443/api/status
+curl: (28) Resolving timed out after 8000 milliseconds
+
+[19:38:40] Kartikeys-MacBook-Pro$ ping -c 2 10.7.3.251
+PING 10.7.3.251 (10.7.3.251): 56 data bytes
+64 bytes from 10.7.3.251: icmp_seq=0 ttl=64 time=7.817 ms
+64 bytes from 10.7.3.251: icmp_seq=1 ttl=64 time=16.184 ms
+
+--- 10.7.3.251 ping statistics ---
+2 packets transmitted, 2 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 7.817/12.001/16.184/4.183 ms
+
+[19:38:41] Kartikeys-MacBook-Pro$ nc -vz -G 3 10.7.3.251 8443
+Connection to 10.7.3.251 port 8443 [tcp/pcsync-https] succeeded!
+
+[19:38:41] Kartikeys-MacBook-Pro$ curl -sS -k -i --max-time 5 https://10.7.3.251:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 14:08:41 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}VERDICT 1 (PASS): by name = no response (lookup failed), by IP = 200 -> DNS layer failure, app is healthy.
+
+[19:38:46] Kartikeys-MacBook-Pro$ dns_start
+[19:40:12] (observed after 85 s: Mac 4 DNS answering again)
+app.cnteam.test    Mac1(10.7.22.176)=10.7.3.251      Mac4(10.7.19.42)=10.7.3.251      OK
+== PART 2: DNS up, both backends stopped ==
+[19:42:50] (observed after 156 s: edge returns 502 (both backends down))
+
+[19:42:50] Kartikeys-MacBook-Pro$ dig +noall +answer @10.7.22.176 app.cnteam.test
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+[19:42:50] Kartikeys-MacBook-Pro$ dscacheutil -q host -a name app.cnteam.test
+name: app.cnteam.test
+ip_address: 10.7.3.251
+
+
+[19:42:50] Kartikeys-MacBook-Pro$ nc -vz -G 3 app.cnteam.test 8443
+Connection to app.cnteam.test port 8443 [tcp/pcsync-https] succeeded!
+
+[19:42:50] Kartikeys-MacBook-Pro$ curl -sS -v --max-time 8 https://app.cnteam.test:8443/api/status
+* Host app.cnteam.test:8443 was resolved.
+* IPv6: (none)
+* IPv4: 10.7.3.251
+*   Trying 10.7.3.251:8443...
+* Connected to app.cnteam.test (10.7.3.251) port 8443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [320 bytes data]
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* (304) (IN), TLS handshake, Unknown (8):
+{ [47 bytes data]
+* (304) (IN), TLS handshake, Certificate (11):
+{ [818 bytes data]
+* (304) (IN), TLS handshake, CERT verify (15):
+{ [264 bytes data]
+* (304) (IN), TLS handshake, Finished (20):
+{ [36 bytes data]
+* (304) (OUT), TLS handshake, Finished (20):
+} [36 bytes data]
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=app.cnteam.test
+*  start date: Oct  2 06:19:53 2026 GMT
+*  expire date: Oct  2 06:19:53 2027 GMT
+*  subjectAltName: host "app.cnteam.test" matched cert's "app.cnteam.test"
+*  issuer: CN=app.cnteam.test
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://app.cnteam.test:8443/api/status
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: app.cnteam.test:8443]
+* [HTTP/2] [1] [:path: /api/status]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /api/status HTTP/2
+> Host: app.cnteam.test:8443
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/2 502 
+< server: nginx/1.31.6
+< date: Sun, 22 Nov 2026 14:12:50 GMT
+< content-type: text/html
+< content-length: 157
+< x-edge: mac2-primary
+< 
+{ [157 bytes data]
+* Connection #0 to host app.cnteam.test left intact
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.31.6</center>
+</body>
+</html>
+VERDICT 2 (PASS): resolves, TCP + TLS OK, nginx returns 502 -> application (backend) layer failure.
+[19:43:40] (observed after 49 s: edge returns 200 again -- Backend A back only; at 19:43:58 Backend B on 10.7.19.42:3002 was still DOWN (connection refused), see note at end)
+
+[19:43:40] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 14:13:40 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}# NOTE 19:43:58: restore check only required one 200, so 'everything restored' was premature. Backend A was back; Backend B (Mac 4) was still down and had to be restarted separately. Both demo verdicts above are unaffected.

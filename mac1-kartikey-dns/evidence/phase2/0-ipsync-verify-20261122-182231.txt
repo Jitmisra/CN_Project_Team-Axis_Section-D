@@ -1,0 +1,108 @@
+IP sync 2026-11-22: MAC1=10.7.22.176 MAC2=10.7.3.251 MAC3=10.7.15.127 MAC4=10.7.19.42
+dnsmasq had been crash-looping (exit 2): old config bound 10.7.8.82 with bind-interfaces. Fixed with interface=en0.
+
+[18:22:28] Kartikeys-MacBook-Pro$ networksetup -getdnsservers Wi-Fi
+10.7.22.176
+
+[18:22:28] Kartikeys-MacBook-Pro$ dig app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> app.cnteam.test
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 37081
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;app.cnteam.test.		IN	A
+
+;; ANSWER SECTION:
+app.cnteam.test.	0	IN	A	10.7.3.251
+
+;; Query time: 0 msec
+;; SERVER: 10.7.22.176#53(10.7.22.176)
+;; WHEN: Sun Nov 22 18:22:28 IST 2026
+;; MSG SIZE  rcvd: 60
+
+
+[18:22:28] Kartikeys-MacBook-Pro$ dig @10.7.22.176 api.cnteam.test +noall +answer +comments
+
+; <<>> DiG 9.10.6 <<>> @10.7.22.176 api.cnteam.test +noall +answer +comments
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 9731
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; ANSWER SECTION:
+api.cnteam.test.	0	IN	A	10.7.3.251
+
+
+[18:22:28] Kartikeys-MacBook-Pro$ nslookup app.cnteam.test
+Server:		10.7.22.176
+Address:	10.7.22.176#53
+
+Name:	app.cnteam.test
+Address: 10.7.3.251
+
+
+[18:22:28] Kartikeys-MacBook-Pro$ dscacheutil -q host -a name app.cnteam.test
+name: app.cnteam.test
+ip_address: 10.7.3.251
+
+
+[18:22:28] Kartikeys-MacBook-Pro$ dig +short @10.7.22.176 example.com
+104.20.23.154
+172.66.147.243
+
+[18:22:28] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 12:52:29 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}
+[18:22:29] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 12:52:29 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}
+[18:22:29] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 12:52:31 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}
+[18:22:31] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 12:52:31 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}

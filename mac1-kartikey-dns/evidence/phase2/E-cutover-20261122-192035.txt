@@ -1,0 +1,16 @@
+
+[19:20:35] Kartikeys-MacBook-Pro$ dig +noall +answer @10.7.22.176 app.cnteam.test
+app.cnteam.test.	30	IN	A	10.7.15.127
+
+[19:20:35] Kartikeys-MacBook-Pro$ dig +noall +answer @10.7.19.42 app.cnteam.test
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+[19:20:36] Kartikeys-MacBook-Pro$ grep ^address= /opt/homebrew/etc/dnsmasq.d/cnteam.conf
+address=/app.cnteam.test/10.7.3.251
+address=/api.cnteam.test/10.7.3.251
+
+[19:20:36] Kartikeys-MacBook-Pro$ dig +noall +answer @10.7.22.176 app.cnteam.test
+app.cnteam.test.	30	IN	A	10.7.3.251
+Cut over app.cnteam.test -> 10.7.3.251 on Mac 1 at 19:20:36. Note the time for the TTL story.
+app.cnteam.test    Mac1(10.7.22.176)=10.7.3.251      Mac4(10.7.19.42)=10.7.3.251      OK
+[19:20:36] both DNS servers agree: app.cnteam.test -> 10.7.3.251

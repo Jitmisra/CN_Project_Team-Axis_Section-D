@@ -1,0 +1,16 @@
+
+[18:57:52] Kartikeys-MacBook-Pro$ dig +noall +answer @10.7.22.176 app.cnteam.test
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+[18:57:52] Kartikeys-MacBook-Pro$ dig +noall +answer @10.7.19.42 app.cnteam.test
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+[18:57:53] Kartikeys-MacBook-Pro$ grep ^address= /opt/homebrew/etc/dnsmasq.d/cnteam.conf
+address=/app.cnteam.test/10.7.15.127
+address=/api.cnteam.test/10.7.3.251
+
+[18:57:53] Kartikeys-MacBook-Pro$ dig +noall +answer @10.7.22.176 app.cnteam.test
+app.cnteam.test.	30	IN	A	10.7.15.127
+Cut over app.cnteam.test -> 10.7.15.127 on Mac 1 at 18:57:53. Note the time for the TTL story.
+app.cnteam.test    Mac1(10.7.22.176)=10.7.15.127     Mac4(10.7.19.42)=10.7.3.251      <-- MISMATCH
+!! Mac 4 still differs -- clients may flip randomly until Anwesha mirrors it

@@ -1,0 +1,14 @@
+# Ext E redo: both DNS servers, polled from Mac 1 (cutover on Mac 1 at 19:18:42)
+[19:18:52] Mac1=10.7.15.127  Mac4=10.7.15.127  AGREE
+
+# hold on standby, polled every 10 s (Mac1 / Mac4 answers + client watcher):
+[19:19:06] Mac1=10.7.15.127 Mac4=10.7.15.127 | watcher: [19:19:06] cache=10.7.3.251 via 10.7.3.251 X-Edge=mac2-primary
+[19:19:17] Mac1=10.7.15.127 Mac4=10.7.15.127 | watcher: [19:19:15] cache=10.7.15.127 via 10.7.15.127 X-Edge=mac3-standby
+[19:19:27] Mac1=10.7.15.127 Mac4=10.7.15.127 | watcher: [19:19:26] cache=10.7.15.127 via 10.7.15.127 X-Edge=mac3-standby
+[19:19:37] Mac1=10.7.15.127 Mac4=10.7.15.127 | watcher: [19:19:36] cache=10.7.15.127 via 10.7.15.127 X-Edge=mac3-standby
+[19:19:47] Mac1=10.7.15.127 Mac4=10.7.15.127 | watcher: [19:19:47] cache=10.7.15.127 via 10.7.15.127 X-Edge=mac3-standby
+[19:19:57] Mac1=10.7.15.127 Mac4=10.7.15.127 | watcher: [19:19:56] cache=10.7.15.127 via 10.7.15.127 X-Edge=mac3-standby
+[19:20:07] Mac1=10.7.15.127 Mac4=10.7.3.251 | watcher: [19:20:06] cache=10.7.15.127 via 10.7.15.127 X-Edge=mac3-standby
+[19:20:36] Mac 1 cut back -> 10.7.3.251; both servers agree again (sync-check OK)
+# FINDING: Mac 4 went back to 10.7.3.251 between 19:19:57 and 19:20:07, ~30 s BEFORE Mac 1 (19:20:36).
+# For those ~30 s the two DNS servers disagreed: a client could get either edge depending on which server it asked.

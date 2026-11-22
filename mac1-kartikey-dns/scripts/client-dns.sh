@@ -13,15 +13,15 @@ save_once() {
   networksetup -getsearchdomains "$NETSVC" >> "$saved.search"
   echo "Saved original resolvers to $saved"
 }
-apply() { save_once; sudo networksetup -setdnsservers "$NETSVC" "$@"; flush_cache; }
+apply() { save_once; networksetup -setdnsservers "$NETSVC" "$@"; flush_cache; }
 case "${1:-show}" in
   show)    ;;
   primary) need MAC1_IP; apply "$MAC1_IP" ;;
   both)    need MAC1_IP MAC4_IP; apply "$MAC1_IP" "$MAC4_IP" ;;
   set)     shift; apply "$@" ;;
   revert)  [[ -f "$saved" ]] || { echo "Nothing saved -- nothing to revert"; exit 0; }
-           if grep -q "aren't any" "$saved"; then sudo networksetup -setdnsservers "$NETSVC" Empty
-           else sudo networksetup -setdnsservers "$NETSVC" $(cat "$saved"); fi
+           if grep -q "aren't any" "$saved"; then networksetup -setdnsservers "$NETSVC" Empty
+           else networksetup -setdnsservers "$NETSVC" $(cat "$saved"); fi
            flush_cache; rm -f "$saved" "$saved.search"; echo "Reverted" ;;
   *) sed -n '2,8p' "$0"; exit 1 ;;
 esac

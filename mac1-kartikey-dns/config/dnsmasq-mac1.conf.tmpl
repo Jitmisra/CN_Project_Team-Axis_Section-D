@@ -6,9 +6,14 @@
 address=/app.@TEAM@.test/@MAC2_IP@
 address=/api.@TEAM@.test/@MAC2_IP@
 
-# --- Where to listen: All interfaces
-listen-address=0.0.0.0
+# --- Where to listen: by INTERFACE, not by IP (Phase 2 fix for DHCP drift).
+# interface=en0 answers on whatever IP en0 has right now; dnsmasq adds loopback
+# automatically, and listen-address=127.0.0.1 makes that explicit. No bind-interfaces,
+# so a new DHCP lease does NOT stop dnsmasq (Phase 1 bound to a fixed IP and broke
+# when the lease changed). Replaces the earlier listen-address=0.0.0.0, which isn't a
+# real address to match on.
 interface=en0
+listen-address=127.0.0.1
 
 # --- Everything that is not ours goes upstream, so clients can still browse.
 no-resolv
