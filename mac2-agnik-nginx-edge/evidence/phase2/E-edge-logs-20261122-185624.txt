@@ -1,0 +1,94 @@
+# edge logs on agniks-MacBook-Pro from Sun Nov 22 18:56:24 IST 2026  (Ctrl-C to stop)
+ACCESS 2026-11-22T18:57:40+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.019 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:57:42+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.055 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:57:45+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.130 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:57:47+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.047 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:57:49+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.112 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:57:51+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.049 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:57:53+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.064 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:57:56+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.051 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:57:58+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.144 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:00+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.055 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:02+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.020 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:04+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.030 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:07+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.022 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:09+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.040 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:11+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.023 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:13+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.080 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:15+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.152 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:17+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.069 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:58:47+05:30 client=10.7.3.251 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.141 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:38+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.033 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:41+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.039 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:43+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.039 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:45+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.024 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:47+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.023 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:50+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.060 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:52+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.106 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:55+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.115 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:57+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.047 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T18:59:59+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.024 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:01+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.201 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:04+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.033 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:06+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.028 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:08+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.227 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:10+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.031 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:12+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.042 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:15+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.126 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:17+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.172 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:19+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.025 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:21+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.029 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:23+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.075 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:26+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.076 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:28+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.075 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:30+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.109 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:33+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.102 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:35+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.198 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:37+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.175 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:40+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.145 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:42+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.084 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:44+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.093 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:47+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.038 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:49+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.029 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:51+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.031 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:53+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.063 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:55+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.033 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:00:58+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.032 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:01:00+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.060 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:02:11+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.036 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:02:24+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.036 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:02:24+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.15.127:3001 ustatus=200 urt=0.114 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+ACCESS 2026-11-22T19:02:59+05:30 client=10.7.22.176 "GET / HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.146 http=HTTP/2.0 tls=TLSv1.3 edge=mac2-primary
+# SUMMARY (requests per upstream used, then per 5-second bucket)
+#    30 upstream=10.7.15.127:3001 
+#    30 upstream=10.7.19.42:3002 
+#   18:57:40  2 req
+#   18:57:45  3 req
+#   18:57:50  2 req
+#   18:57:55  2 req
+#   18:58:00  3 req
+#   18:58:05  2 req
+#   18:58:10  2 req
+#   18:58:15  2 req
+#   18:58:45  1 req
+#   18:59:35  1 req
+#   18:59:40  2 req
+#   18:59:45  2 req
+#   18:59:50  2 req
+#   18:59:55  3 req
+#   19:00:00  2 req
+#   19:00:05  2 req
+#   19:00:10  2 req
+#   19:00:15  3 req
+#   19:00:20  2 req
+#   19:00:25  2 req
+#   19:00:30  2 req
+#   19:00:35  2 req
+#   19:00:40  3 req
+#   19:00:45  2 req
+#   19:00:50  2 req
+#   19:00:55  2 req
+#   19:01:00  1 req
+#   19:02:10  1 req
+#   19:02:20  2 req
+#   19:02:55  1 req
