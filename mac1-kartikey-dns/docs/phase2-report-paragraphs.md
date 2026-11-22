@@ -10,8 +10,8 @@ this note. **Don't submit placeholders.**
 | A: primary DNS stopped | clients resolve via Mac 4 | `dscacheutil` → [__], curl (no `-k`) → 200 from Backend [__]; Mac 4 log shows query from [__] | [__] | `mac1-kartikey-dns/evidence/phase2/A-backup-failover-*.txt`, `A-failover-*.pcap` |
 | A: both DNS stopped | resolution fails, IP reachable | `Could not resolve host`; `curl -k https://<MAC2_IP>:8443` → [__] | [__] | `A-dns-vs-app-failure.txt` |
 | A: both backends stopped | resolves + TLS OK, 502 | `dig` NOERROR, `SSL certificate verify ok`, `HTTP/1.1 502` | [__] | `A-dns-vs-app-failure.txt` |
-| B: record change, wait | old answer ≤30 s, then new | change at [__], OS cache flipped at [__] (+[__] s) | [__] | `B-ttl-*.txt`, `B-ttl-onwire-*.txt` |
-| B: record change, flush | new answer immediately | flushed at [__], next lookup already new | [__] | `B-ttl-*.txt` |
+| B: record change, wait | old answer ≤30 s, then new | TTL 0 → 30 on the wire. Change issued 18:39:44, dnsmasq serving the new IP by 18:39:54; OS cache still old at 18:40:20, new at 18:40:23 (≈30 s); curl `X-Edge: mac2-primary` → `Failed to connect` at the same moment | ✅ | `B-ttl-20261122-183943.txt`, `B-ttl-onwire-20261122-183628.txt` |
+| B: record change, flush | new answer immediately | record reverted 18:40:36, cache still stale at 18:40:38; flushed 18:40:39, next lookup already 10.7.3.251 and `X-Edge: mac2-primary` | ✅ | `B-ttl-20261122-183943.txt` |
 
 ## Ext A: Backup DNS
 
@@ -36,11 +36,13 @@ listening. Clients still have to be told the new resolver IP, which is why real 
 In Phase 1, record changes showed up instantly because dnsmasq's default `local-ttl` is 0, which tells clients
 not to cache. That hid the most important property of DNS in a migration. We set `local-ttl=30` and confirmed it
 on the wire: the `dig +noall +answer` TTL column went from 0 to 30 (`B-ttl-onwire-*.txt`). With clients pointed at
-Mac 1 only (so the record change was the only variable), we changed `app.cnteam.test` on the server at [__]. `dig`,
+Mac 1 only (so the record change was the only variable), we changed `app.cnteam.test` from Mac 2 (10.7.3.251) to 10.7.19.42 at 18:39:44. `dig`,
 which asks the server directly, showed the new IP immediately. `dscacheutil`, which is what curl and browsers use,
-kept returning the old cached IP for [__] s, and only then switched. When we pointed the record at the standby edge,
-the curl loop's `X-Edge` header also stayed `mac2-primary` through the stale window before flipping to
-`mac3-standby`, so stale DNS was visible at the application layer, not just as an IP. Repeating the change with a
+kept returning the old cached IP until about 30 s after it was cached (still old at 18:40:20, new at 18:40:23). The
+curl loop showed the same thing at the application layer: requests kept reaching the Mac 2 edge
+(`X-Edge: mac2-primary`, 200) through the whole stale window, then failed to connect once the cache
+expired, because the new IP had no edge. So clients whose cache hadn't expired yet were protected from a bad
+record, and anyone who looked it up afterwards was hit at once. Repeating the change with a
 manual flush (`dscacheutil -flushcache; killall -HUP mDNSResponder`) made it take effect on the very next lookup.
 The lesson: an authoritative change is instant, but clients see it only after their cached copy expires, so the
 TTL is the upper bound on how long a DNS-based cutover takes to reach everyone. That's why production migrations

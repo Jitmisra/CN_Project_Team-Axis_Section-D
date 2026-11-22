@@ -1,0 +1,31 @@
+
+[18:39:44] Kartikeys-MacBook-Pro$ dig @10.7.22.176 app.cnteam.test +noall +answer
+
+; <<>> DiG 9.10.6 <<>> @10.7.22.176 app.cnteam.test +noall +answer
+; (1 server found)
+;; global options: +cmd
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+[18:39:44] Kartikeys-MacBook-Pro$ dscacheutil -q host -a name app.cnteam.test
+name: app.cnteam.test
+ip_address: 10.7.3.251
+
+[18:39:44] t=+00s  OS cache: 10.7.3.251       server (dig): 10.7.3.251       X-Edge: mac2-primary
+---- [18:39:44] CHANGE RECORD on the server: app.cnteam.test -> 10.7.19.42
+[18:39:54] t=+00s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:39:58] t=+04s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:40:01] t=+07s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:40:04] t=+10s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:40:07] t=+13s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:40:10] t=+16s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:40:13] t=+19s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:40:16] t=+22s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:40:20] t=+26s  OS cache: 10.7.3.251       server (dig): 10.7.19.42       X-Edge: mac2-primary
+[18:40:23] t=+29s  OS cache: 10.7.19.42       server (dig): 10.7.19.42       X-Edge: Failed to connect
+[18:40:27] t=+33s  OS cache: 10.7.19.42       server (dig): 10.7.19.42       X-Edge: Failed to connect
+[18:40:31] t=+37s  OS cache: 10.7.19.42       server (dig): 10.7.19.42       X-Edge: Failed to connect
+[18:40:35] t=+41s  OS cache: 10.7.19.42       server (dig): 10.7.19.42       X-Edge: Failed to connect
+---- [18:40:36] CHANGE RECORD on the server: app.cnteam.test -> 10.7.3.251
+[18:40:38] t=+00s  OS cache: 10.7.19.42       server (dig): 10.7.3.251       X-Edge: Failed to connect
+---- [18:40:39] MANUAL FLUSH: dscacheutil -flushcache; killall -HUP mDNSResponder
+[18:40:39] t=+00s  OS cache: 10.7.3.251       server (dig): 10.7.3.251       X-Edge: mac2-primary

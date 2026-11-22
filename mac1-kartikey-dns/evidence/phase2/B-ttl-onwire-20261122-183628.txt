@@ -1,0 +1,44 @@
+== BEFORE (Phase 1 config, local-ttl unset = 0): second column is the TTL
+
+[18:36:28] Kartikeys-MacBook-Pro$ dig @10.7.22.176 app.cnteam.test +noall +answer
+
+; <<>> DiG 9.10.6 <<>> @10.7.22.176 app.cnteam.test +noall +answer
+; (1 server found)
+;; global options: +cmd
+app.cnteam.test.	0	IN	A	10.7.3.251
+
+[18:36:28] Kartikeys-MacBook-Pro$ dig @10.7.22.176 api.cnteam.test +noall +answer
+
+; <<>> DiG 9.10.6 <<>> @10.7.22.176 api.cnteam.test +noall +answer
+; (1 server found)
+;; global options: +cmd
+api.cnteam.test.	0	IN	A	10.7.3.251
+
+== AFTER (Phase 2, ttl.conf: local-ttl=30)
+
+[18:39:25] Kartikeys-MacBook-Pro$ dig @10.7.22.176 app.cnteam.test +noall +answer
+
+; <<>> DiG 9.10.6 <<>> @10.7.22.176 app.cnteam.test +noall +answer
+; (1 server found)
+;; global options: +cmd
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+[18:39:25] Kartikeys-MacBook-Pro$ dig @10.7.22.176 api.cnteam.test +noall +answer
+
+; <<>> DiG 9.10.6 <<>> @10.7.22.176 api.cnteam.test +noall +answer
+; (1 server found)
+;; global options: +cmd
+api.cnteam.test.	30	IN	A	10.7.3.251
+
+[18:39:25] Kartikeys-MacBook-Pro$ cat /opt/homebrew/etc/dnsmasq.d/ttl.conf
+# ==== Phase 2 / Extension B -- short visible TTL ====
+# Installed as /opt/homebrew/etc/dnsmasq.d/ttl.conf
+# dnsmasq's default TTL for locally configured records is 0 (= "do not cache"),
+# which is why Phase 1 record changes were visible instantly. 30s makes caching observable.
+local-ttl=30
+
+TTL 0  : clients may NOT cache -> every lookup hits the server, changes visible instantly
+TTL 30 : clients MAY cache 30 s -> a record change is invisible to them until expiry
+
+TTL 0  : clients may NOT cache -> every lookup hits the server, changes visible instantly
+TTL 30 : clients MAY cache 30 s -> a record change is invisible to them until expiry
