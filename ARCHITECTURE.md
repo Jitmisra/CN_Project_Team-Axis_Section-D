@@ -123,8 +123,51 @@ of evidence in this repo, so any item can be found in under 30 seconds.
 **Phase 1: complete** — build, live verification, and all 5 failure demos done
 across all 4 machines, with evidence captured for each.
 
-**Phase 2: not started**, gated behind Phase 1 sign-off. Planned: backup DNS
+**Phase 2: in progress**. Design below (section 13); results go in `PHASE2_REPORT.md`. Planned: backup DNS
 resolver (Extension A), DNS TTL + controlled record change (Extension B), backend
 service isolation via firewall (Extension C), HA failover formal writeup
 (Extension D), DNS-based edge cutover (Extension E), faculty-injected
 troubleshooting challenge (Extension F).
+
+## 13. Phase 2 additions (design. IPs are re-checked every session)
+
+```mermaid
+flowchart LR
+    Client(["Client\nresolvers: Mac 1, Mac 4"])
+    subgraph Mac1["Mac 1 (Kartikey)"]
+        DNS1["dnsmasq PRIMARY\nTTL 30"]
+    end
+    subgraph Mac4["Mac 4 (Anwesha)"]
+        DNS2["dnsmasq BACKUP\nidentical records"]
+        B["Backend B :3002\npf: only edges"]
+    end
+    subgraph Mac2["Mac 2 (Agnik)"]
+        E1["nginx PRIMARY edge\nX-Edge: mac2-primary"]
+    end
+    subgraph Mac3["Mac 3 (Vishuti)"]
+        E2["nginx STANDBY edge\nX-Edge: mac3-standby"]
+        A["Backend A :3001\npf: only edges"]
+    end
+    Client -- "DNS (either server)" --> DNS1
+    Client -.-> DNS2
+    Client -- "HTTPS :8443\n(normal)" --> E1
+    Client -. "HTTPS :8443\n(after Ext E cutover)" .-> E2
+    E1 --> A
+    E1 --> B
+    E2 -- "127.0.0.1" --> A
+    E2 --> B
+```
+
+| Extension | Change | Owner | Config |
+|---|---|---|---|
+| A: Backup DNS | second dnsmasq on Mac 4 with identical records; clients list Mac 1 + Mac 4 | Anwesha / Kartikey | `mac1-kartikey-dns/config/dnsmasq-mac4-backup.conf.tmpl` |
+| B: TTL | `local-ttl=30` (was 0, i.e. no caching) so record changes show cache behaviour | Kartikey | `mac1-kartikey-dns/config/ttl.conf` |
+| C: Isolation | pf anchor on Mac 3/Mac 4: only the edge tier `<edges>` (Mac 2, + Mac 3 as standby) reaches 3001/3002 | Vishuti / Anwesha | `backend_a/config/`, `backend_b/config/` |
+| D: HA failover | passive health checks `max_fails=1 fail_timeout=10s`, `proxy_next_upstream error timeout http_502/503/504`, `tries 2`, connect 2 s / read 5 s, edge access log records `$upstream_addr` | Agnik | `mac2-agnik-nginx-edge/config/edge.conf.tmpl` |
+| E: Edge migration | standby nginx on Mac 3 rendered from the **same template** (same cert/key); DNS cutover with TTL 30 | Agnik / Vishuti / Kartikey | `mac2-agnik-nginx-edge/standby-edge/` |
+| F: Troubleshooting | layered client-side check DNS → TCP → TLS → HTTP → backend | everyone (Anwesha: `tools/diagnose.sh`) | `tools/` |
+| Phase 1 gaps | HTTP/2 (ALPN h2), `/api/info` with an ETag that is identical across backends (304 from either), `HEAD` on both backends | Agnik / Vishuti / Anwesha | template, `backend_*.py` |
+
+**Remaining single point of failure:** live traffic still depends on one edge at a time. Ext E moves traffic manually,
+bounded by the TTL; it is not automatic failover. To remove the SPOF: two active edges + health-checked DNS failover
+(Route 53 failover records), a VIP with VRRP/keepalived, anycast, or a managed multi-AZ load balancer.

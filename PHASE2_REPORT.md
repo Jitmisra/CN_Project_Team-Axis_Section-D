@@ -1,0 +1,68 @@
+# Phase 2 Final Report: Team Axis, Section D
+
+> Draft. Each extension lead fills in their paragraph and results rows; Agnik assembles.
+> Evidence paths are listed in `EVIDENCE_INDEX.md`.
+
+**Team:** Kartikey (Mac 1) · Agnik (Mac 2) · Vishuti (Mac 3) · Anwesha (Mac 4)
+**Domain:** `app.cnteam.test`, `api.cnteam.test` · **Edge ports:** 8080 → 8443 (TLS)
+**IP table on review day:** _(fill in from the session-start IP sync)_
+
+| Machine | Owner | Roles in Phase 2 | IPv4 (review day) |
+|---|---|---|---|
+| Mac 1 | Kartikey | Primary DNS, test client | |
+| Mac 2 | Agnik | Primary edge (nginx LB + TLS) | 10.7.3.251 (2026-11-22, re-check) |
+| Mac 3 | Vishuti | Backend A :3001, standby edge (Ext E) | |
+| Mac 4 | Anwesha | Backend B :3002, backup DNS, test client | |
+
+## 1. What changed from Phase 1
+
+| Area | Phase 1 | Phase 2 | Config file |
+|---|---|---|---|
+| DNS | single dnsmasq on Mac 1, TTL 0 | + backup dnsmasq on Mac 4 (identical records), TTL 30, clients list both | `mac1-kartikey-dns/config/…` |
+| Edge | round-robin, `max_fails=2 fail_timeout=5s` | tuned failover (`max_fails=1`, `fail_timeout=10s`, `proxy_next_upstream_tries 2`), edge access log with upstream, `X-Edge` header, HTTP/2 | `mac2-agnik-nginx-edge/config/…` |
+| Standby edge | none | nginx on Mac 3, same cert, for DNS-based cutover | `mac2-agnik-nginx-edge/standby-edge/` |
+| Backends | `/`, `/api/status`, Cache-Control | + `/api/info` with consistent ETag → 304, correct HEAD | `backend_a/backend_a.py`, `backend_b/backend_b.py` |
+| Isolation | backend ports open to the whole LAN | pf anchor: only the edge tier (`<edges>`) reaches 3001/3002, rollback scripts | `backend_a/config/…`, `backend_b/config/…` |
+| Diagnosis | per-machine scripts | team `tools/diagnose.sh` (layered DNS → TCP → TLS → HTTP → backend) | `tools/` |
+
+## 2. Resilience tests and results
+
+| Test | Expected | Observed (numbers/timestamps) | Pass | Evidence |
+|---|---|---|---|---|
+| A: primary DNS stopped | clients resolve via Mac 4 | | | |
+| A: both DNS stopped (contrast) | name resolution fails, IP reachable | | | |
+| A: both backends stopped (contrast) | resolves + TLS OK, 502 | | | |
+| B: record change, wait | old answer ≤30 s, then new | | | |
+| B: record change, flush | new answer immediately | | | |
+| C: client → 3001/3002 direct | blocked (refused / timeout) | | | |
+| C: edge → 3001/3002 | allowed, LB alternates | | | |
+| C: rollback | direct access restored | | | |
+| D: Backend A stopped | 100% served by B, 0 errors | | | |
+| D: Backend A restarted | alternation resumes in ~10–15 s (fail_timeout 10 s + next round-robin turn) | | | |
+| E: cutover to standby | cached clients on old edge ≤30 s, then standby | | | |
+| E: primary edge stopped after cutover | no client impact | | | |
+
+## 3. Troubleshooting findings (Ext F + drill)
+
+Summarise the fault drill (`evidence/phase2/F-drill-log.md`) and the actual faculty-injected fault: symptom → layer-by-layer
+checks → root cause → fix → verification. Note which faults were "silent" behind redundancy and how you spotted them.
+
+## 4. Learning summary (one paragraph per extension)
+
+**Ext A: Backup DNS** _(Anwesha)_:
+
+**Ext B: DNS TTL and record change** _(Kartikey)_:
+
+**Ext C: Service isolation** _(Vishuti)_:
+
+**Ext D: HA failover** _(Agnik)_:
+
+**Ext E: Controlled edge migration** _(Agnik + Vishuti)_:
+
+**Ext F: Troubleshooting** _(everyone)_:
+
+## 5. Remaining single points of failure and how we'd remove them
+
+The Mac 2 edge is still the SPOF for live traffic (Ext E is a manual, TTL-bound migration, not automatic failover). Options:
+two active edges + health-checked DNS failover, a VIP with VRRP/keepalived, anycast, or a managed multi-AZ load balancer.
+Also mention: same Wi-Fi/AP for all machines, the single self-signed cert/key, passive-only health checks.
