@@ -20,4 +20,4 @@ echo ">>> NOW tell Vishuti: stop Backend A at ~15 s, start it again at ~40 s <<<
 env $MODE ./scripts/g-failover-watch.sh "$DUR" 1 D
 kill -TERM "$LOGPID" 2>/dev/null; sleep 1
 echo "Edge log saved: $(ls -t evidence/phase2/D-edge-logs-*.txt | head -1)"
-grep -c 'upstream=[^ ]*, ' "$(ls -t evidence/phase2/D-edge-logs-*.txt | head -1)" | xargs -I{} echo "requests that failed over inside one request (retry A->B): {}"
+{ grep -c 'upstream=[^ ]*, ' "$(ls -t evidence/phase2/D-edge-logs-*.txt | head -1)" || true; } | xargs -I{} echo "requests that failed over inside one request (retry A->B): {}"
