@@ -1,0 +1,33 @@
+=== STANDBY EDGE SELF-TEST EVIDENCE (MAC 3) ===
+Date/Time: Sun Nov 22 18:28:28 IST 2026
+
+--- 1. Testing Standby Edge over HTTPS (app.cnteam.test:8443) ---
+HTTP/1.1 200 OK
+Server: nginx/1.31.9
+Date: Sun, 22 Nov 2026 12:58:28 GMT
+Content-Type: application/json
+Content-Length: 32
+Connection: keep-alive
+X-Backend: A
+Cache-Control: max-age=60
+ETag: "4a04d2d7b5598c32"
+X-Edge: mac3-standby
+
+{"backend": "A", "status": "ok"}
+--- 2. Checking X-Edge Header (Must be mac3-standby) ---
+X-Edge: mac3-standby
+
+--- 3. Testing HTTP to HTTPS 301 Redirect on Port 8080 ---
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.31.9
+Date: Sun, 22 Nov 2026 12:58:30 GMT
+Content-Type: text/html
+Content-Length: 169
+Connection: keep-alive
+
+--- 4. Checking Backend Alternation / Failover via Standby Edge ---
+Request 1: X-Backend: A
+Request 2: X-Backend: A
+Request 3: X-Backend: A
+Request 4: X-Backend: A
+
