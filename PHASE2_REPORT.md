@@ -42,7 +42,7 @@
 | D: Backend A restarted | alternation resumes in ~10–15 s | A served again at 18:48:58, A/B alternation resumed straight away | ✅ | same files |
 | E: cutover to standby | cached clients on old edge ≤30 s, then standby | Mac 1 record → 10.7.15.127 at 18:57:53. Mac 1 client kept hitting `mac2-primary` until 18:58:18, flipped to `mac3-standby` at 18:58:20 (**27 s**, within TTL 30), 0 failed requests, A/B balancing continued on the standby. Primary edge log: Mac 1 requests stop after 18:58:17 and return at 18:59:38 (26 s after cut back at 18:59:12); Mac 1 client flipped back to `mac2-primary` at 18:59:39 (**27 s**). Watcher total: **90 requests, 0 errors**, A/B balancing on both edges. Standby log (Mac 3): Mac 1 traffic arrives continuously from **18:58:20**, all 200, `edge=mac3-standby`, HTTP/2 over TLS 1.3. **Finding:** the backup DNS (Mac 4) was not updated, so it kept answering 10.7.3.251. Clients using Mac 4 would have stayed on the old edge (servers disagreeing) | ✅ (Mac 1 path) | Kartikey's `E-cutover-*.txt`, `mac2-agnik-nginx-edge/evidence/phase2/E-edge-logs-20261122-185624.txt` |
 | E: redo with BOTH DNS servers | both servers switch together; same TTL behaviour | Mac 1 cut over 19:18:42, Mac 4 mirrored by 19:18:52 (sync-check: both 10.7.15.127). Mac 1 client → `mac3-standby` at 19:19:13 (~30 s), cut back 19:20:36 → `mac2-primary` at 19:21:06 (30 s = TTL). **105/105 HTTP 200, 0 errors.** Primary edge log: last Mac 1 request 19:19:11, first again 19:21:06 (matches the client side to the second). **Finding:** on the way back Mac 4 reverted at ~19:20:05, ~30 s *before* Mac 1, so the two servers disagreed for ~30 s. In production one control plane (hosted zone / zone transfer) changes every name server atomically | ✅ | `mac1-kartikey-dns/evidence/phase2/E-redo-watch-*-191832.txt`, `E-redo-dns-sync-*-191852.txt`, `mac2-agnik-nginx-edge/evidence/phase2/E-edge-logs-20261122-191657.txt` |
-| E: primary edge stopped after cutover | no client impact | | | |
+| E: primary edge stopped after cutover | no client impact | _optional, not run_ | | |
 
 ## 3. Troubleshooting findings (Ext F + drill)
 
@@ -102,9 +102,43 @@ until they close. So you keep the old edge running until its traffic drains (Ext
 
 **Ext C: Service isolation** _(Vishuti)_:
 
-**Ext D: HA failover** _(Agnik)_:
+**Ext D: HA failover** _(Agnik)_
 
-**Ext E: Controlled edge migration** _(Agnik + Vishuti)_:
+In Phase 1 the upstream used `max_fails=2 fail_timeout=5s`. For Phase 2 the edge config is rendered from one
+template (`config/edge.conf.tmpl`) with `max_fails=1 fail_timeout=10s`, `proxy_next_upstream error timeout
+http_502 http_503 http_504`, `proxy_next_upstream_tries 2`, `proxy_connect_timeout 2s` and `proxy_read_timeout 5s`, plus an edge
+access log that records `$upstream_addr`. With a client watcher running for 5 minutes, Vishuti stopped Backend A
+at 18:48:13 and restarted it at 18:48:59. Every request in that window was served by Backend B, and all 252/252
+requests returned HTTP 200. The key evidence is in the edge log: at 18:48:14, 18:48:29 and 18:48:44 nginx re-tried A
+(`connect() failed (61: Connection refused)`, then `upstream server temporarily disabled`), and the log line for
+each of those requests shows `upstream=10.7.15.127:3001, 10.7.19.42:3002`. The retry happened **inside the same client
+request**, so the client never saw the failure. A rejoined at 18:48:58. A local pre-test showed that the type of failure
+sets the cost: a refused connection costs nothing, a silent host costs one 2 s connect timeout, and a hung backend
+costs one 5 s read timeout. After that first failure, passive health checking takes the backend out for 10 s.
+This is the main gap compared with a cloud load balancer: nginx open source only learns from real failed requests (passive),
+while AWS ALB target groups or nginx Plus probe on a timer (active). The remaining single point of failure is the
+edge itself. If nginx on Mac 2 dies, DNS still resolves but nothing answers. Removing it needs a second
+active edge plus health-checked DNS failover, a floating VIP (VRRP/keepalived), anycast, or a managed multi-AZ load balancer.
+Ext E shows the manual version.
+
+**Ext E: Controlled edge migration** _(Agnik + Vishuti)_
+
+The standby edge on Mac 3 is rendered from the **same template** as the primary. Only `X-Edge: mac3-standby`
+and a local upstream for Backend A differ. It uses the same certificate and private key, because clients trust
+that specific certificate, and every edge of a service must be able to prove it is `app.cnteam.test`. The
+`X-Edge` header made the cutover visible in plain curl output. With TTL 30 on both DNS servers, Kartikey repointed
+`app.cnteam.test` to the standby at 18:57:53. His client kept reaching `mac2-primary` from its cached answer until
+18:58:18, then flipped at 18:58:20 (27 s). The primary edge log shows the same thing from the other side: Mac 1's
+requests stop after 18:58:17, and the standby log shows them arriving from 18:58:20. The cut-back took another
+27 s, with 0 failed requests. The first run exposed a real operational mistake: the backup DNS on Mac 4 was not
+updated, so clients that asked Mac 4 would have stayed on the old edge. In the redo both servers switched (Mac 4
+10 s after Mac 1). The client flipped at 19:19:13 and the primary saw its last Mac 1 request at 19:19:11. After the
+cut-back at 19:20:36 the client returned at 19:21:06 (30 s = TTL), with 105/105 requests OK. On the way back Mac 4
+reverted about 30 s before Mac 1, so the two servers briefly disagreed. Production systems avoid this with one
+control plane (a hosted zone or zone transfer) that changes every name server together. Lessons: a DNS cutover
+is manual and bounded by the TTL (tens of seconds here, often minutes in production, where the TTL is lowered in
+advance). Existing keep-alive connections ignore DNS entirely, so the old edge must keep running until its traffic
+drains. And this is migration, not automatic failover, which is why the edge is still the single point of failure in Ext D.
 
 **Ext F: Troubleshooting** _(everyone)_:
 
