@@ -1,0 +1,81 @@
+# INVALID RUN -- do not use as evidence. Mac 4 DNS missed ONE query at 19:23:59 (not actually stopped),
+# so the script proceeded; at 19:24:02 Mac 4 answered and curl by name returned 200. The VERDICT 1 line
+# below was printed unconditionally (script bug, fixed afterwards). Part 2 never ran: backends were not stopped.
+
+################ run 20261122-192331 on Kartikeys-MacBook-Pro ################
+== PART 1: both DNS servers stopped ==
+
+[19:23:31] Kartikeys-MacBook-Pro$ dns_stop
+[19:23:59] (observed after 27 s: Mac 4 DNS stopped (no answer))
+
+[19:23:59] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 @10.7.22.176 app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> +time=2 +tries=1 @10.7.22.176 app.cnteam.test
+; (1 server found)
+;; global options: +cmd
+;; connection timed out; no servers could be reached
+
+[19:24:02] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 @10.7.19.42 app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> +time=2 +tries=1 @10.7.19.42 app.cnteam.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 36107
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;app.cnteam.test.		IN	A
+
+;; ANSWER SECTION:
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+;; Query time: 14 msec
+;; SERVER: 10.7.19.42#53(10.7.19.42)
+;; WHEN: Sun Nov 22 19:24:02 IST 2026
+;; MSG SIZE  rcvd: 60
+
+
+[19:24:02] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 8 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 13:54:02 GMT
+content-type: application/json
+content-length: 32
+x-backend: B
+cache-control: max-age=60
+etag: "f50db9b5982be874"
+x-edge: mac2-primary
+
+{"backend": "B", "status": "ok"}
+[19:24:02] Kartikeys-MacBook-Pro$ ping -c 2 10.7.3.251
+PING 10.7.3.251 (10.7.3.251): 56 data bytes
+64 bytes from 10.7.3.251: icmp_seq=0 ttl=64 time=8.720 ms
+64 bytes from 10.7.3.251: icmp_seq=1 ttl=64 time=8.345 ms
+
+--- 10.7.3.251 ping statistics ---
+2 packets transmitted, 2 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 8.345/8.533/8.720/0.188 ms
+
+[19:24:03] Kartikeys-MacBook-Pro$ nc -vz -G 3 10.7.3.251 8443
+Connection to 10.7.3.251 port 8443 [tcp/pcsync-https] succeeded!
+
+[19:24:03] Kartikeys-MacBook-Pro$ curl -sS -k -i --max-time 5 https://10.7.3.251:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 13:54:03 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}VERDICT 1: lookup fails but the edge answers by IP -> DNS layer failure, app is healthy.
+
+[19:24:03] Kartikeys-MacBook-Pro$ dns_start
+[19:24:04] (observed after 0 s: Mac 4 DNS answering again)
+app.cnteam.test    Mac1(10.7.22.176)=10.7.3.251      Mac4(10.7.19.42)=10.7.3.251      OK
+== PART 2: DNS up, both backends stopped ==
