@@ -3,6 +3,7 @@
 logs/
 *.key
 certs/*.key
+backups/
 .env
 __pycache__/
 *.pyc

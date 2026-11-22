@@ -1,0 +1,14 @@
+# standby self-test on Vishutis-MacBook-Pro (10.7.15.127) at Sun Nov 22 18:37:06 IST 2026
+* ALPN: curl offers h2,http/1.1
+* ALPN: server accepted h2
+*  SSL certificate verify ok.
+< HTTP/2 200 
+< x-backend: A
+< x-edge: mac3-standby
+# 6 requests (expect X-Backend A and B alternating):
+200 x-backend: B x-edge: mac3-standby 
+200 x-backend: A x-edge: mac3-standby 
+200 x-backend: B x-edge: mac3-standby 
+200 x-backend: A x-edge: mac3-standby 
+200 x-backend: B x-edge: mac3-standby 
+200 x-backend: A x-edge: mac3-standby 

@@ -13,88 +13,124 @@ echo "============================================================"
 echo "Time: $(date)"
 echo ""
 
+VERDICT="PASS"
+FAILING_LAYER=""
+FAILING_REASON=""
+
+# LAYER 1-3: PHYSICAL, DATA LINK, & NETWORK
 echo "[LAYER 1-3: PHYSICAL, DATA LINK, & NETWORK]"
-echo "Checking interface en0..."
 ACTUAL_IP=$(ipconfig getifaddr en0 || ipconfig getifaddr en1 || echo "NO_IP")
 if [[ "${ACTUAL_IP}" == "NO_IP" ]]; then
-    echo "  [FAIL] No IP address assigned on en0. Check Wi-Fi connection."
+    echo "  [FAIL] No IP address assigned on en0. Wi-Fi disconnected."
+    VERDICT="FAIL"
+    FAILING_LAYER="Layer 2/3 (IP Assignment)"
+    FAILING_REASON="No IP address on en0"
 else
-    echo "  [PASS] IP Address: ${ACTUAL_IP}"
+    echo "  [PASS] IP Address on en0: ${ACTUAL_IP}"
 fi
 
-echo "Checking Default Gateway ping (${DEFAULT_GATEWAY})..."
+echo -n "Checking Gateway reachability (${DEFAULT_GATEWAY})... "
 if ping -c 1 -W 1000 "${DEFAULT_GATEWAY}" > /dev/null 2>&1; then
-    echo "  [PASS] Gateway is reachable."
+    echo "[PASS]"
 else
-    echo "  [FAIL] Gateway unreachable. Check LAN/Wi-Fi connection."
+    echo "[WARN] Gateway unreachable (ICMP ping filtered or gateway down)."
 fi
 
-echo "Checking Edge / Load Balancer ping (Mac 2: ${MAC2_IP})..."
+echo -n "Checking Edge / Load Balancer reachability (Mac 2: ${MAC2_IP})... "
 if ping -c 1 -W 1000 "${MAC2_IP}" > /dev/null 2>&1; then
-    echo "  [PASS] Mac 2 (Nginx Edge) is reachable."
+    echo "[PASS] Reachable"
 else
-    echo "  [FAIL] Mac 2 (${MAC2_IP}) is unreachable. Check if Mac 2 is on LAN."
+    echo "[WARN] Mac 2 (${MAC2_IP}) not responding to ping (ICMP may be blocked or IP changed)."
 fi
 
+# LAYER 4: TRANSPORT / PORT BINDING
 echo ""
 echo "[LAYER 4: TRANSPORT / PORT BINDING]"
-echo "Checking port 3001..."
-PORT_OUTPUT=$(lsof -i :3001 2>/dev/null || true)
+PORT_OUTPUT=$(lsof -nP -iTCP:3001 -sTCP:LISTEN 2>/dev/null || true)
 if [[ -z "${PORT_OUTPUT}" ]]; then
     echo "  [FAIL] Nothing is listening on port 3001!"
     echo "         Remediation: Run ./scripts/start-backend.sh"
+    if [[ "${VERDICT}" == "PASS" ]]; then
+        VERDICT="FAIL"
+        FAILING_LAYER="Layer 4 (Transport / Process Down)"
+        FAILING_REASON="backend_a.py is not running on port 3001"
+    fi
 else
     echo "  [PASS] Port 3001 is active:"
     echo "${PORT_OUTPUT}" | sed 's/^/         /'
     
-    # Check if bound to 0.0.0.0 or 127.0.0.1
     if echo "${PORT_OUTPUT}" | grep -q "127.0.0.1:3001"; then
-        echo "  [WARN] Bound ONLY to 127.0.0.1! External machines (Mac 2) cannot connect!"
-        echo "         Remediation: Edit backend_a.py to bind to ('0.0.0.0', 3001)."
-    elif echo "${PORT_OUTPUT}" | grep -E -q "\*:3001|0.0.0.0:3001"; then
+        echo "  [FAIL] Bound ONLY to 127.0.0.1! External Edge (Mac 2) cannot connect!"
+        echo "         Remediation: Bind to 0.0.0.0:3001 in backend_a.py."
+        if [[ "${VERDICT}" == "PASS" ]]; then
+            VERDICT="FAIL"
+            FAILING_LAYER="Layer 4 (Socket Binding)"
+            FAILING_REASON="Server bound to loopback 127.0.0.1 instead of 0.0.0.0"
+        fi
+    else
         echo "  [PASS] Server is correctly bound to 0.0.0.0 (all interfaces)."
     fi
 fi
 
+# SECURITY / FIREWALL LAYER (PF ANCHOR)
 echo ""
-echo "[SECURITY / FIREWALL LAYER (PF)]"
-PF_STATUS=$(sudo -n pfctl -si 2>/dev/null | grep -i "Status:" || echo "Requires sudo or not enabled")
-echo "PF Status: ${PF_STATUS}"
-ACTIVE_RULES=$(sudo -n pfctl -sr 2>/dev/null || echo "Unable to read pf rules without sudo")
-if echo "${ACTIVE_RULES}" | grep -q "port 3001"; then
-    echo "  Active rules affecting port 3001:"
-    echo "${ACTIVE_RULES}" | grep "port 3001" | sed 's/^/    /'
-    if echo "${ACTIVE_RULES}" | grep -q "from ${MAC2_IP} to any port 3001"; then
-        echo "  [PASS] Mac 2 (${MAC2_IP}) is explicitly allowed to port 3001."
+echo "[SECURITY / FIREWALL LAYER (PF ANCHOR: cnteam)]"
+PF_STATUS=$(sudo -n pfctl -s info 2>/dev/null | grep -i "Status:" || echo "Requires sudo or inactive")
+echo "  PF Global Status: ${PF_STATUS}"
+
+ANCHOR_RULES=$(sudo -n pfctl -a cnteam -sr 2>/dev/null || echo "")
+if [[ -n "${ANCHOR_RULES}" ]]; then
+    echo "  Active cnteam anchor rules:"
+    echo "${ANCHOR_RULES}" | sed 's/^/    /'
+    
+    EDGE_TABLE=$(sudo -n pfctl -a cnteam -t edges -T show 2>/dev/null || echo "")
+    echo "  Allowed <edges> table members: ${EDGE_TABLE}"
+    if echo "${EDGE_TABLE}" | grep -q "${MAC2_IP}"; then
+        echo "  [PASS] Current Mac 2 IP (${MAC2_IP}) is present in <edges> allow-list."
     else
-        echo "  [WARN] Mac 2 (${MAC2_IP}) might NOT be allowed! Verify pf rules."
+        echo "  [FAIL] Stale Mac 2 IP! Current Mac 2 (${MAC2_IP}) is NOT in <edges> table!"
+        echo "         Remediation: Run ./scripts/firewall-enable.sh to re-render with today's IP."
+        if [[ "${VERDICT}" == "PASS" ]]; then
+            VERDICT="FAIL"
+            FAILING_LAYER="Firewall / PF Anchor"
+            FAILING_REASON="Mac 2 IP (${MAC2_IP}) not in <edges> table"
+        fi
     fi
 else
-    echo "  [INFO] No custom pf blocking rules for port 3001 currently active."
+    echo "  [INFO] No custom cnteam anchor rules currently loaded (Direct access unblocked)."
 fi
 
+# LAYER 7: APPLICATION / HTTP RESPONSE
 echo ""
 echo "[LAYER 7: APPLICATION / HTTP RESPONSE]"
-echo "Testing local loopback HTTP request..."
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "http://localhost:3001/api/status" 2>/dev/null || echo "000")
 if [[ "${HTTP_CODE}" == "200" ]]; then
     echo "  [PASS] Local HTTP GET /api/status returned 200 OK."
-    BACKEND_HDR=$(curl -s -I "http://localhost:3001/api/status" | grep -i "x-backend" | tr -d '\r' || echo "None")
-    echo "         ${BACKEND_HDR}"
+    BACKEND_HDR=$(curl -s -I "http://localhost:3001/api/status" | grep -i "x-backend" | tr -d '\r' || echo "")
+    echo "         Header: ${BACKEND_HDR}"
 else
-    echo "  [FAIL] Local HTTP request failed with code ${HTTP_CODE}."
+    echo "  [FAIL] Local HTTP request to /api/status failed with code ${HTTP_CODE}."
+    if [[ "${VERDICT}" == "PASS" ]]; then
+        VERDICT="FAIL"
+        FAILING_LAYER="Layer 7 (Application Response)"
+        FAILING_REASON="/api/status returned HTTP ${HTTP_CODE}"
+    fi
 fi
 
-echo ""
-echo "Testing LAN IP HTTP request (http://${ACTUAL_IP}:3001/api/status)..."
-LAN_HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "http://${ACTUAL_IP}:3001/api/status" 2>/dev/null || echo "000")
-if [[ "${LAN_HTTP_CODE}" == "200" ]]; then
-    echo "  [PASS] LAN IP HTTP request succeeded (code 200)."
+# Check /api/info and ETag
+INFO_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "http://localhost:3001/api/info" 2>/dev/null || echo "000")
+if [[ "${INFO_CODE}" == "200" ]]; then
+    ETAG_HDR=$(curl -s -I "http://localhost:3001/api/info" | grep -i "etag" | tr -d '\r' || echo "")
+    echo "  [PASS] Local HTTP GET /api/info returned 200 OK. (${ETAG_HDR})"
 else
-    echo "  [FAIL] LAN IP HTTP request failed (code ${LAN_HTTP_CODE})."
+    echo "  [FAIL] Local HTTP request to /api/info failed with code ${INFO_CODE}."
 fi
 
 echo ""
 echo "============================================================"
-echo "Diagnostic complete."
+if [[ "${VERDICT}" == "PASS" ]]; then
+    echo "VERDICT: [PASS] All layers healthy on Mac 3 (Backend A)!"
+else
+    echo "VERDICT: [FAIL] First failing layer: ${FAILING_LAYER} (${FAILING_REASON})"
+fi
 echo "============================================================"

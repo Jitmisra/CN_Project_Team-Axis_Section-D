@@ -1,0 +1,38 @@
+=== DEMO STEP 7 / EXTENSION F: CACHING & 304 NOT MODIFIED VERIFICATION ===
+Date/Time: $(date)
+Service: Backend A (Port 3001)
+
+1. Initial GET Request to /api/info (Full Request -> 200 OK):
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Sun, 22 Nov 2026 12:41:30 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+ETag: "39464b4ed106dad1"
+Content-Length: 36
+
+{"service":"cnteam","version":"2.0"}
+2. Body SHA256 Verification:
+39464b4ed106dad141a61babb9ffb211bfb4b7520d9f351a1f93f4c1a8b70138  -
+
+3. HEAD Request to /api/info (Headers only, no body):
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Sun, 22 Nov 2026 12:41:30 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+ETag: "39464b4ed106dad1"
+Content-Length: 36
+
+
+4. Conditional Request with If-None-Match (Cache Revalidation -> 304 Not Modified):
+HTTP/1.0 304 Not Modified
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Sun, 22 Nov 2026 12:41:30 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+ETag: "39464b4ed106dad1"
+

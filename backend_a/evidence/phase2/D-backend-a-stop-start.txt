@@ -1,0 +1,24 @@
+=== EXTENSION D EVIDENCE: BACKEND A STOP & RESTART FAILOVER DEMO (RECORDED RUN) ===
+Host: Mac 3 (Vishuti) - 10.7.15.127
+Date: 2026-11-22
+
+[1] Shutdown Action:
+Command: ./scripts/stop-backend.sh
+Exact Stop Time: 18:48:13 IST
+Result: PID 16820 terminated, Port 3001 released.
+Offline Window: 46 seconds (Held down while Agnik's edge recorder captured failover to Backend B at 10.7.19.42:3002).
+
+[2] Restart Action:
+Command: ./scripts/start-backend.sh
+Exact Start Time: 18:48:59 IST
+Result: Backend A started successfully with PID 16980.
+
+[3] Active Ports Verification:
+COMMAND   PID          USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+nginx   16311 vishutijamwal    7u  IPv4 0xfdba8f2fa8350e9b      0t0  TCP *:8080 (LISTEN)
+nginx   16311 vishutijamwal    8u  IPv4 0x7547716b4e09f287      0t0  TCP *:8443 (LISTEN)
+Python  16980 vishutijamwal    3u  IPv4 0x600a86d487ece1d8      0t0  TCP *:3001 (LISTEN)
+
+[4] Health Check:
+curl -s http://127.0.0.1:3001/api/status
+Response: {"backend": "A", "status": "ok"}

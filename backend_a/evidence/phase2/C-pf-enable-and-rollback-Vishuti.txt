@@ -1,0 +1,32 @@
+=== EXTENSION C EVIDENCE: PF SERVICE ISOLATION ENABLE & CLEAN ROLLBACK ===
+Host: Mac 3 (Vishuti) - 10.7.15.127
+Backend A: Port 3001
+Date: 2026-11-22
+
+[1] ACTIVE ANCHOR RULES DURING ISOLATION TEST:
+pass in quick on lo0 proto tcp from any to any port = 3001 flags S/SA keep state
+pass in quick proto tcp from <edges> to any port = 3001 flags S/SA keep state
+block return in quick proto tcp from any to any port = 3001
+
+[2] ACTIVE <edges> KERNEL TABLE ENTRIES:
+10.7.3.251 (Primary Edge - Agnik / Mac 2)
+
+[3] RESULT DURING ACTIVE ISOLATION:
+- Client (Mac 1 / Kartikey, 10.7.22.176): nc -vz -G 3 10.7.15.127 3001 -> Connection refused (TCP RST via 'block return')
+- Edge (Mac 2 / Agnik, 10.7.3.251): curl https://app.cnteam.test:8443/api/status -> 200 OK (Round-robin traffic reaches 3001 uninhibited)
+- Local loopback (lo0): Diagnostic and Standby Edge tools retain unrestricted access to 3001
+
+[4] TERMINAL ROLLBACK EXECUTION (firewall-disable.sh):
+=== DISABLING PF SERVICE ISOLATION (ROLLBACK) ===
+[1/3] Flushing cnteam anchor rules and tables...
+[2/3] Restoring system /etc/pf.conf...
+[3/3] Releasing PF reference token 13571391565373510404...
+
+=== PF STATUS AFTER ROLLBACK ===
+Status: Disabled for 0 days 00:00:00          Debug: Urgent
+State Table                          Total             Rate
+[+] SUCCESS: PF service isolation disabled. Normal network state restored.
+
+[5] POST-ROLLBACK RECOVERY VERIFICATION:
+nc -vz -G 3 10.7.15.127 3001 -> Connection succeeded!
+curl http://10.7.15.127:3001/api/status -> {"backend": "A", "status": "ok"}
