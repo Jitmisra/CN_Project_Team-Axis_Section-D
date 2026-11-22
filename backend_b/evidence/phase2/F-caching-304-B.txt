@@ -1,0 +1,19 @@
+=== Backend B ETag & 304 Verification ===
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.6
+Date: Sun, 22 Nov 2026 13:17:31 GMT
+Content-Type: application/json
+X-Backend: B
+Cache-Control: max-age=60
+ETag: "39464b4ed106dad1"
+Content-Length: 36
+
+
+HTTP/1.0 304 Not Modified
+Server: BaseHTTP/0.6 Python/3.14.6
+Date: Sun, 22 Nov 2026 13:17:31 GMT
+Content-Type: application/json
+X-Backend: B
+Cache-Control: max-age=60
+ETag: "39464b4ed106dad1"
+

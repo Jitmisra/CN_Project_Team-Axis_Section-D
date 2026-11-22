@@ -1,0 +1,18 @@
+=== Phase 2 Extension C: Port 3002 Firewall Isolation ===
+Date: 2026-11-22
+Host: Mac 4 (Anwesha, 10.7.19.42)
+
+[1] Active PF rules on Mac 4:
+pass in quick on lo0 proto tcp from any to any port 3002
+pass in quick proto tcp from 10.7.3.251 to any port 3002
+pass in quick proto tcp from 10.7.15.127 to any port 3002
+block in quick proto tcp from any to any port 3002
+
+[2] Test from Mac 1 (Kartikey - Blocked client):
+$ nc -vz -G 3 10.7.19.42 3002
+nc: connectx to 10.7.19.42 port 3002 (tcp) failed: Operation timed out
+Result: BLOCKED (PASS)
+
+[3] Edge access via Nginx (Agnik):
+Allowed: Mac 2 (10.7.3.251) and Mac 3 (10.7.15.127)
+Load balancer proxying to Backend B continues normally.
