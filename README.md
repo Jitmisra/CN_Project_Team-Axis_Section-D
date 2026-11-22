@@ -4,10 +4,12 @@ Computer Networks course project: a fully local, private network service platfor
 DNS, an nginx reverse-proxy/load-balancer edge with TLS, and two backend servers,
 across 4 machines.
 
-**See [`ARCHITECTURE.md`](./ARCHITECTURE.md)** for the full system design (topology
-diagram, IP table, request-flow by protocol layer) and
-**[`EVIDENCE_INDEX.md`](./EVIDENCE_INDEX.md)** for a task-by-task map of every piece
-of evidence in this repo.
+| Read this | For |
+|---|---|
+| **[`STUDY_GUIDE.md`](./STUDY_GUIDE.md)** | how the whole system works, every result, troubleshooting playbook, viva Q&A (start here) |
+| **[`PHASE2_REPORT.md`](./PHASE2_REPORT.md)** | Phase 2 final report: what changed, test results with timestamps, findings, learning per extension |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | topology, IP table, request flow by protocol layer, Phase 2 design |
+| [`EVIDENCE_INDEX.md`](./EVIDENCE_INDEX.md) | every evidence file, by task / extension |
 
 ## Team & roles
 
@@ -51,7 +53,19 @@ curl https://app.cnteam.test:8443/api/status
 > If you get `OSError: Address already in use`, kill the old process first:
 > `kill -9 $(lsof -t -i:3001)` or `kill -9 $(lsof -t -i:3002)`
 
-## Status: Phase 1 complete (build + verify + all 5 failure demos)
+## Status: Phase 1 and Phase 2 complete
+
+**Phase 2 (22 Nov 2026):** all six extensions demonstrated with evidence:
+- **A** backup DNS on Mac 4: primary stopped, still resolved. Contrast: DNS failure vs app failure (502).
+- **B** TTL 30: the client kept the old answer ≈30 s, a flush made the change instant.
+- **C** pf isolation: 3001 refused and 3002 timed out from a client, the edge kept access, rollback confirmed.
+- **D** HA failover: Backend A down 46 s, **252/252 requests HTTP 200**, retries inside the same request.
+- **E** DNS cutover to a standby edge on Mac 3: client flip in 27–30 s (= TTL), 0 failed requests.
+- **F** layered diagnosis tools, plus a real silent DNS fault found and fixed.
+
+Details and numbers: [`PHASE2_REPORT.md`](./PHASE2_REPORT.md).
+
+### Phase 1 (October)
 All 4 machines are built, live, and cross-verified end to end:
 - DNS resolves `app.cnteam.test` → Mac 2 from multiple clients (no `.local`, uses `.test`).
 - HTTPS works through nginx with a trusted cert, **no `-k` flag anywhere** in the final evidence.
@@ -67,10 +81,11 @@ Each folder above has its own `README.md`, `scripts/`, `docs/` (architecture sec
 viva prep), and `evidence/` for that machine's role.
 
 ## Branches
-Each member worked on their own branch (`Agnik`, `Kartikey`, `Vishuti`, `anwesha`) for
-their machine's config, source code, and evidence; all four are merged into `main` here.
-Phase 2 (backup DNS, TTL, service isolation, HA failover, DNS cutover) will land in new
-commits on `main` once Phase 1 is formally approved.
+Phase 1: `Agnik`, `Kartikey`, `Vishuti`, `anwesha`. Phase 2: `agnik-phase2`, `Kartikey`, `Vishuti`,
+`anwesha-phase2`. All are merged into `main`.
+
+> IPs change between sessions (campus DHCP). Before any demo, every member checks `ipconfig getifaddr en0`
+> and the DNS records, nginx upstreams and pf allow-lists are re-rendered from each folder's `team.env`.
 
 ## Domain
 `app.cnteam.test` / `api.cnteam.test`, resolved by the team's private DNS server.

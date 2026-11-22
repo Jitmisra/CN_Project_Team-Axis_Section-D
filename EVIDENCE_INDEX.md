@@ -80,7 +80,7 @@ demo, so anything can be found in under 30 seconds. See
 ### Extension B — TTL & Record Modification
 - `mac1-kartikey-dns/config/ttl.conf` (Kartikey: TTL 30s template)
 - `mac1-kartikey-dns/scripts/demo-ttl.sh` (Kartikey: record change test)
-- `backend_b/evidence/phase2/B-client-observation.txt` (Anwesha: client watcher observing cached response expiring after 30s)
+- `mac1-kartikey-dns/evidence/phase2/B-ttl-20261122-183943.txt` (client watcher: cached answer held ~30 s, then switched; flush = instant). Anwesha's own client-side copy was not committed
 
 ### Extension C — Service Isolation (Firewall)
 - `backend_a/config/pf_rules_isolation.conf` (Vishuti: port 3001 isolation)
@@ -90,7 +90,7 @@ demo, so anything can be found in under 30 seconds. See
 
 ### Extension D — High Availability & Passive Failover
 - `mac2-agnik-nginx-edge/scripts/g-failover-watch.sh` (Agnik: edge load-balancer observer)
-- `backend_b/evidence/phase2/D-client-watch.txt` (Anwesha: client watch showing Backend A stopped, zero errors, 100% traffic to B)
+- `mac2-agnik-nginx-edge/evidence/phase2/D-watch-agniks-MacBook-Pro-20261122-184729.txt` (watcher: Backend A stopped 18:48:13–18:48:59, 252/252 HTTP 200, B-only during the outage) + `D-edge-logs-20261122-184728.txt` (in-request retries)
 
 ### Extension E — DNS-Based Standby Edge Migration
 - `mac1-kartikey-dns/scripts/cutover.sh` (Kartikey: DNS repoint to standby edge)
