@@ -1,0 +1,52 @@
+=== EXTENSION E EVIDENCE: STANDBY EDGE CUTOVER ACCESS LOG ===
+Host: Mac 3 (Vishuti) - 10.7.15.127
+Standby Edge: Nginx on :8080 (HTTP) / :8443 (HTTPS), X-Edge: mac3-standby
+Date: 2026-11-22
+
+=== CUTOVER TIMELINE ===
+Pre-cutover:   Traffic from 10.7.3.251 (Agnik mac2-primary verification probes only)
+DNS Cutover:   18:57:33 IST  → Kartikey ran cutover.sh standby → DNS flipped app.cnteam.test to 10.7.15.127
+Post-cutover:  18:57:33 IST  → NEW client 10.7.22.176 begins hitting mac3-standby directly
+Continuous A/B round-robin from 18:58:20 onward with edge=mac3-standby on every response
+
+=== KEY EVIDENCE (pre → post cutover boundary) ===
+-- LAST PRE-CUTOVER HIT (from primary edge 10.7.3.251) --
+2026-11-22T18:55:59+05:30 client=10.7.3.251 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.018 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+
+-- FIRST POST-CUTOVER HITS (new client 10.7.22.176, DNS pointing to mac3) --
+2026-11-22T18:57:33+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.002 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:57:33+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.075 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:57:33+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.001 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+
+=== FULL POST-CUTOVER LOG (continuous A/B round-robin via mac3-standby) ===
+2026-11-22T18:58:20+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.029 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:22+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.001 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:24+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.040 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:26+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.001 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:29+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.039 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:31+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.001 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:33+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.023 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:36+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.001 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:38+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.095 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:40+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.001 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:42+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.156 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:45+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.002 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:47+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.202 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:49+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.002 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:52+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.057 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:54+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.002 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:56+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.113 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:58:59+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.001 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:59:01+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.036 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:59:03+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.000 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:59:05+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.044 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:59:07+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=127.0.0.1:3001 ustatus=200 urt=0.000 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+2026-11-22T18:59:10+05:30 client=10.7.22.176 "GET /api/status HTTP/2.0" status=200 upstream=10.7.19.42:3002 ustatus=200 urt=0.334 http=HTTP/2.0 tls=TLSv1.3 edge=mac3-standby
+
+=== SUMMARY ===
+DNS cutover time:   18:57:33 IST
+First external hit: 18:57:33 IST (client 10.7.22.176)
+Protocol:           HTTP/2.0 over TLS 1.3
+Load balancing:     Perfect A/B round-robin (127.0.0.1:3001 ↔ 10.7.19.42:3002)
+Edge header:        edge=mac3-standby on ALL responses (confirms standby, not primary)
+All responses:      HTTP 200 OK
