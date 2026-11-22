@@ -16,7 +16,8 @@ summary() {
   grep -o 'upstream=[^ ]*\( [0-9.:]*\)\{0,1\}' "$OUT" | sort | uniq -c | sed 's/^/#  /' | tee -a "$OUT"
   grep -E '^ACCESS ' "$OUT" | awk '{split($2,t,"T"); s=substr(t[2],1,8); split(s,h,":"); b=h[1]":"h[2]":"sprintf("%02d",int(h[3]/5)*5); c[b]++}
        END{for (k in c) print "#   " k "  " c[k] " req"}' | sort | tee -a "$OUT"
-  echo "Saved to $OUT"; exit 0
+  echo "Saved to $OUT"
+  kill $(jobs -p) 2>/dev/null; pkill -P $$ 2>/dev/null; exit 0
 }
 trap summary INT TERM
 tail -n0 -F "$LOGDIR/edge-access.log" 2>/dev/null | sed -u 's/^/ACCESS /' | tee -a "$OUT" &
