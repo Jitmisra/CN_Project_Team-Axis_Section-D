@@ -1,31 +1,24 @@
-=== EXTENSION D EVIDENCE: BACKEND A STOP & RESTART FAILOVER DEMO ===
+=== EXTENSION D EVIDENCE: BACKEND A STOP & RESTART FAILOVER DEMO (RECORDED RUN) ===
 Host: Mac 3 (Vishuti) - 10.7.15.127
-Timestamp: 2026-11-22T18:43:20+05:30
+Date: 2026-11-22
 
 [1] Shutdown Action:
 Command: ./scripts/stop-backend.sh
-Result: Process 16503 stopped, Port 3001 released.
-Duration: Backend A kept offline for ~45 seconds while Agnik recorded edge failover to Backend B (10.7.19.42:3002).
+Exact Stop Time: 18:48:13 IST
+Result: PID 16820 terminated, Port 3001 released.
+Offline Window: 46 seconds (Held down while Agnik's edge recorder captured failover to Backend B at 10.7.19.42:3002).
 
 [2] Restart Action:
 Command: ./scripts/start-backend.sh
-PID: 16820
-Status: RUNNING, listening on 0.0.0.0:3001
+Exact Start Time: 18:48:59 IST
+Result: Backend A started successfully with PID 16980.
 
-[3] Port Verification:
+[3] Active Ports Verification:
 COMMAND   PID          USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
-Python  16820 vishutijamwal    3u  IPv4 0x4940bf87977fa745      0t0  TCP *:3001 (LISTEN)
+nginx   16311 vishutijamwal    7u  IPv4 0xfdba8f2fa8350e9b      0t0  TCP *:8080 (LISTEN)
+nginx   16311 vishutijamwal    8u  IPv4 0x7547716b4e09f287      0t0  TCP *:8443 (LISTEN)
+Python  16980 vishutijamwal    3u  IPv4 0x600a86d487ece1d8      0t0  TCP *:3001 (LISTEN)
 
-[4] Log Tail Extract (/Users/vishutijamwal/Downloads/prompts/CN_Project_Team-Axis_Section-D/backend_a/logs/backend_a.log):
---------------------------------------------------------------------------------
-[Backend A] 10.7.3.251 - "GET /api/status HTTP/1.1" 200 -
-[Backend A] 10.7.3.251 - "GET /api/status HTTP/1.1" 200 -
-[Backend A] 10.7.3.251 - "GET /api/status HTTP/1.1" 200 -
-[Backend A] Shutting down gracefully...
-[Backend A] Server stopped.
-Backend A listening on 0.0.0.0:3001
-[Backend A] 127.0.0.1 - "GET /api/status HTTP/1.1" 200 -
---------------------------------------------------------------------------------
-[5] Health Check:
+[4] Health Check:
 curl -s http://127.0.0.1:3001/api/status
 Response: {"backend": "A", "status": "ok"}
