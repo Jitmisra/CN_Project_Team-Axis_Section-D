@@ -1,45 +1,69 @@
 === BACKEND A VERIFICATION EVIDENCE ===
-Date/Time: Fri Oct  2 12:16:00 IST 2026
+Date/Time: Sun Nov 22 18:11:53 IST 2026
 
 --- 1. Testing GET / (Root Endpoint) ---
 HTTP/1.0 200 OK
 Server: BaseHTTP/0.6 Python/3.14.2
-Date: Fri, 02 Oct 2026 06:46:00 GMT
+Date: Sun, 22 Nov 2026 12:41:53 GMT
 Content-Type: text/plain
 X-Backend: A
 Cache-Control: max-age=60
+ETag: "1233d869f41ace6a"
+Content-Length: 21
 
 Backend A is running
 
 --- 2. Testing GET /api/status (JSON Status Endpoint) ---
 HTTP/1.0 200 OK
 Server: BaseHTTP/0.6 Python/3.14.2
-Date: Fri, 02 Oct 2026 06:46:00 GMT
+Date: Sun, 22 Nov 2026 12:41:53 GMT
 Content-Type: application/json
 X-Backend: A
 Cache-Control: max-age=60
+ETag: "4a04d2d7b5598c32"
+Content-Length: 32
 
 {"backend": "A", "status": "ok"}
---- 3. Testing LAN IP Reachability (http://10.7.18.246:3001/api/status) ---
+--- 3. Testing GET /api/info (Shared Info + ETag) ---
 HTTP/1.0 200 OK
 Server: BaseHTTP/0.6 Python/3.14.2
-Date: Fri, 02 Oct 2026 06:46:00 GMT
+Date: Sun, 22 Nov 2026 12:41:53 GMT
 Content-Type: application/json
 X-Backend: A
 Cache-Control: max-age=60
+ETag: "39464b4ed106dad1"
+Content-Length: 36
+
+{"service":"cnteam","version":"2.0"}
+--- 4. Testing LAN IP Reachability (http://10.7.15.127:3001/api/status) ---
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Sun, 22 Nov 2026 12:41:53 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+ETag: "4a04d2d7b5598c32"
+Content-Length: 32
 
 {"backend": "A", "status": "ok"}
---- 4. Testing 404 Handler (http://localhost:3001/invalid-path) ---
+--- 5. Testing 404 Handler (http://localhost:3001/invalid-path) ---
 HTTP/1.0 404 Not Found
 Server: BaseHTTP/0.6 Python/3.14.2
-Date: Fri, 02 Oct 2026 06:46:00 GMT
+Date: Sun, 22 Nov 2026 12:41:54 GMT
 Content-Type: application/json
 X-Backend: A
 Cache-Control: max-age=60
+Content-Length: 21
 
 {"error":"not found"}
---- 5. Specific Header Checks ---
+--- 6. Specific Header Checks ---
 X-Backend Header: X-Backend: A
 Cache-Control Header: Cache-Control: max-age=60
-Content-Type Header: Content-Type: application/json
+ETag Header: ETag: "39464b4ed106dad1"
+--- 7. Conditional Request Check (304 Not Modified) ---
+HTTP/1.0 304 Not Modified
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Sun, 22 Nov 2026 12:41:54 GMT
+Content-Type: application/json
+X-Backend: A
 

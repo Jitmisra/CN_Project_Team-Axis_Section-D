@@ -1,0 +1,15 @@
+# config/pf.cnteam.anchor.tmpl — Template for CN Team Service Isolation Anchor
+# Edge tier table: Mac 2 (Agnik's Edge)
+# Note: Standby edge is local on Mac 3 (loopback lo0), so it is covered by the lo0 pass rule.
+table <edges> { __MAC2_IP__ }
+
+# 1. Allow all local traffic on loopback (management, curl, local standby edge)
+pass in quick on lo0 proto tcp from any to any port 3001
+
+# 2. Allow incoming traffic only from authorized edges
+pass in quick proto tcp from <edges> to any port 3001 keep state
+
+# 3. Block all other direct incoming TCP traffic to port 3001
+# 'block return' sends TCP RST (instant Connection Refused)
+# 'block drop' drops silently (causes timeout)
+__BLOCK_ACTION__ in quick proto tcp from any to any port 3001

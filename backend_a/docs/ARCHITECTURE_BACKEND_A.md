@@ -1,113 +1,105 @@
-# Mac 3 (Vishuti) — Backend A Architecture Document
+# Mac 3 (Vishuti) — Backend A & Standby Edge Architecture Document (Phase 2)
 
 ## 1. System Role & Topology
 
-Within the 4-Mac Private Network Service Platform, **Mac 3** acts as **Backend Application Instance A**. It is one of two identical, horizontally scaled application servers positioned behind the Edge Reverse Proxy and Load Balancer (Mac 2 / Agnik).
+Within the 4-Mac Private Network Service Platform, **Mac 3** serves a dual role:
+1. **Primary Role:** **Backend Application Instance A** — one of two identical, horizontally scaled application servers positioned behind the Edge Reverse Proxy and Load Balancer (Mac 2 / Agnik).
+2. **Phase 2 Role (Extension E):** **Standby Edge Node** — hosts a secondary Nginx reverse proxy instance ready to assume traffic if DNS cutover is initiated.
 
 ```
-+-----------------------------------------------------------------------------------+
-|                                  LOCAL LAN SUBNET                                 |
-|                         10.7.0.0/19 (Gateway: 10.7.0.1)                           |
-+-----------------------------------------------------------------------------------+
-        ^                                                           ^
-        | (1) DNS Query                                             | (3) Proxied HTTP
-        |     UDP :53                                               |     TCP :3001
-+---------------+                                           +---------------+
-|     Mac 1     |                                           |     Mac 3     |
-|   (Kartikey)  |                                           |   (Vishuti)   |
-|   DNS Server  |                                           |   Backend A   |
-|  10.7.8.82    |                                           | 10.7.18.246   |
-+---------------+                                           +---------------+
-        ^                                                           ^
-        |                                                           |
-+---------------+              (2) HTTPS (TCP :8443/:443)   +---------------+
-|     Mac 4     | ========================================> |     Mac 2     |
-|   (Anwesha)   |                                           |    (Agnik)    |
-|   Backend B / | <======================================== |   Edge / LB   |
-|  Test Client  |             Encrypted TLS Response        |  10.7.14.242  |
-|               |                                           +---------------+
-+---------------+                                                   |
-        ^                                                           | (3b) Proxied HTTP
-        +-----------------------------------------------------------+      TCP :3002
++---------------------------------------------------------------------------------------------------+
+|                                          LOCAL LAN SUBNET                                         |
+|                                  10.7.0.0/19 (Gateway: 10.7.0.1)                                  |
++---------------------------------------------------------------------------------------------------+
+        ^                                                                       ^
+        | (1) DNS Query                                                         | (3) Proxied HTTP
+        |     UDP :53                                                           |     TCP :3001
++---------------+                                                       +---------------+
+|     Mac 1     |                                                       |     Mac 3     |
+|   (Kartikey)  |                                                       |   (Vishuti)   |
+|  Primary DNS  |                                                       |   Backend A   |
+|   10.7.8.82   |                                                       |  10.7.15.127  |
++---------------+                                                       +---------------+
+        ^                                                                       ^
+        | (1b) Backup DNS (Ext A)                                               |
++---------------+                        (2) HTTPS (TCP :8443)          +---------------+
+|     Mac 4     | ====================================================> |     Mac 2     |
+|   (Anwesha)   |                                                       |    (Agnik)    |
+|  Backend B /  | <==================================================== |  Primary Edge |
+|  Backup DNS   |                       Encrypted TLS                   |  10.7.3.251   |
+|  10.7.5.197   |                                                       +---------------+
++---------------+                                                               |
+        ^                                                                       | (3b) Proxied HTTP
+        +-----------------------------------------------------------------------+      TCP :3002
+                                 (During Ext E Cutover)
+                                 DNS points to Mac 3 (10.7.15.127:8443)
 ```
 
-### Node Specification
+### Node Specification (Phase 2 - 2026-11-22)
 - **Node**: Mac 3 (Vishuti)
-- **Role**: Backend Application Server A
-- **Private IPv4**: `10.7.18.246`
+- **Roles**: Backend Application Server A & Standby Edge Host
+- **Private IPv4**: `10.7.15.127`
 - **Subnet Mask**: `255.255.224.0` (`/19`)
 - **Gateway**: `10.7.0.1`
 - **MAC Address**: `10:9f:41:a9:20:0d`
 - **Active Interface**: `en0`
-- **Application Service**: Python 3 REST Server (`backend_a.py`)
-- **Listen Address**: `0.0.0.0:3001` (TCP)
+- **Backend Application Service**: Python 3 REST Server (`backend_a.py`) on `0.0.0.0:3001`
+- **Standby Edge Service**: Nginx reverse proxy on `8080` (HTTP) and `8443` (TLS)
 
 ---
 
 ## 2. Backend A Application Architecture (`backend_a.py`)
 
-### Design Philosophy
-The application layer is deliberately dependency-free and lightweight. The objective of the course project is to demonstrate and measure network plumbing, socket binding, transport-layer segmentation, reverse-proxying, caching semantics, and packet filtering.
-
 ### Socket Binding Semantics
 - **Bound Address**: `0.0.0.0:3001` (`INADDR_ANY`).
-- **Rationale**: Binding to `0.0.0.0` instructs the macOS Darwin kernel to bind the listening socket to all network interfaces (`lo0`, `en0`, etc.). If the server were bound to `127.0.0.1` (`INADDR_LOOPBACK`), packets arriving from the LAN (specifically from Mac 2 at `10.7.14.242`) would be rejected at the transport layer with a TCP RST.
+- **Rationale**: Binds the listening socket to all active network interfaces (`lo0` and `en0`). This allows local standby Nginx on Mac 3 to connect via `127.0.0.1:3001` and remote primary Nginx on Mac 2 to connect via `10.7.15.127:3001`.
 
 ### API Routes & Contract
 1. `GET /`:
-   - Status: `200 OK`
-   - Content-Type: `text/plain`
-   - Body: `Backend A is running\n`
-   - Headers: `X-Backend: A`, `Cache-Control: max-age=60`
+   - Status: `200 OK`, `text/plain`, `Backend A is running\n`
+   - Headers: `X-Backend: A`, `Cache-Control: max-age=60`, `ETag: "1233d869f41ace6a"`
 2. `GET /api/status`:
-   - Status: `200 OK`
-   - Content-Type: `application/json`
-   - Body: `{"backend": "A", "status": "ok"}`
-   - Headers: `X-Backend: A`, `Cache-Control: max-age=60`
-3. Fallback (`*`):
-   - Status: `404 Not Found`
-   - Content-Type: `application/json`
-   - Body: `{"error":"not found"}`
-
-### Diagnostic Headers
-- **`X-Backend: A`**: A custom HTTP response header injected by Backend A. When Agnik's Nginx reverse proxy load-balances across the pool, the client observes this header alternating between `A` and `B`, providing deterministic proof of layer-7 load balancing.
-- **`Cache-Control: max-age=60`**: Declares that client/proxy caches may store the response for 60 seconds without revalidation, supporting the Task F caching verification.
+   - Status: `200 OK`, `application/json`, `{"backend": "A", "status": "ok"}`
+   - Headers: `X-Backend: A`, `Cache-Control: max-age=60`, `ETag: "4a04d2d7b5598c32"`
+3. `GET /api/info` (Phase 2 Caching Endpoint):
+   - Status: `200 OK`, `application/json`, `{"service":"cnteam","version":"2.0"}`
+   - Headers: `X-Backend: A`, `Cache-Control: max-age=60`, `ETag: "39464b4ed106dad1"`
+4. `HEAD` Method Support:
+   - Returns identical headers to `GET`, but writes zero body bytes (`Content-Length: 36`).
+5. Conditional Requests (`If-None-Match`):
+   - If client header contains matching ETag, server returns `HTTP/1.0 304 Not Modified` with empty body.
 
 ---
 
-## 3. Security & Service Isolation Architecture (Phase 2 - Extension C)
+## 3. Security & Service Isolation Architecture (Extension C)
 
-In a multi-tier enterprise architecture, backend application servers should never be directly accessible by external clients; all traffic must pass through the edge reverse proxy / WAF.
+Mac 3 acts as the **team lead** for Packet Filter isolation.
 
-To enforce this architectural invariant, Mac 3 utilizes macOS's kernel-level **Packet Filter (`pf`)**:
-
-### Firewall Configuration (`pf_rules_isolation.conf`)
+### Anchor Configuration (`config/pf.cnteam.anchor`)
 ```pf
-# 1. Allow loopback so local tests and monitoring continue to work
+table <edges> { 10.7.3.251 }
 pass in quick on lo0 proto tcp from any to any port 3001
-
-# 2. Block all incoming TCP traffic targeting port 3001
-block in proto tcp from any to any port 3001
-
-# 3. Explicitly allow Mac 2 (Agnik / Nginx Edge: 10.7.14.242)
-pass in proto tcp from 10.7.14.242 to any port 3001
+pass in quick proto tcp from <edges> to any port 3001 keep state
+block return in quick proto tcp from any to any port 3001
 ```
 
-### Packet Evaluation Mechanics
-1. **Rule Ordering**: In PF syntax, rules are evaluated sequentially. The last matching rule decides the packet's fate (unless `quick` is specified).
-2. **Mac 2 Traffic**: A packet from `10.7.14.242:eph_port` to `10.7.18.246:3001` matches `block in ...` and then matches `pass in ... from 10.7.14.242`, allowing the TCP SYN handshake to complete.
-3. **Client Direct Traffic**: A packet from any other client (e.g., Mac 1 or Mac 4) matches `block in ...` and fails to match rule 3. PF drops or sends a TCP RST to the unauthorized client.
-4. **Local Loopback**: Rule 1 specifies `quick`, short-circuiting rule evaluation for internal management.
+### Key Engineering Decisions:
+1. **Anchor-Based Loading:** Uses `anchor "cnteam"` loaded from `/etc/pf.conf` or a root wrapper, preserving Apple's default system anchors (`com.apple/*`) instead of wiping them.
+2. **Table `<edges>` Abstraction:** The authorized edge tier is abstracted into a kernel lookup table. Adding new edges (or updating drifted IPs) is an $O(1)$ table operation.
+3. **`block return` vs `block drop`:** Default is `block return` which emits an active `TCP RST` (instant Connection Refused for diagnostics), while supporting `block drop` for silent timeout demonstrations.
+4. **Token Management & Safe Rollback:** Enables PF via `pfctl -E` and preserves the reference token. Disable script flushes the anchor, reloads `/etc/pf.conf`, and releases the token (`pfctl -X <token>`), guaranteeing zero residual firewall rules.
 
 ---
 
-## 4. Failure Domains & High Availability (HA)
+## 4. Standby Edge Architecture (Extension E)
 
-### Backend Failure vs Edge Failure Matrix
-
-| Failure Scenario | Point of Failure | Client Observation | Protocol Explanation |
-| :--- | :--- | :--- | :--- |
-| **Backend A Stopped** (`Ctrl+C` on Mac 3) | Mac 3 (:3001) | Client requests continue to succeed! `X-Backend` header shows `B` only. | Mac 2's Nginx upstream pool detects TCP failure on `10.7.18.246:3001` (`fail_timeout=5s`, `max_fails=2`) and fails over transparently to Backend B. |
-| **Both Backends Stopped** | Mac 3 & Mac 4 | Client receives `HTTP 502 Bad Gateway`. | DNS resolution succeeds, TCP handshake to Mac 2 succeeds, TLS handshake succeeds. Nginx fails to connect to any upstream and returns standard 502 error page. |
-| **Edge Server Stopped** (Nginx down on Mac 2) | Mac 2 (:8443/:443) | `curl: (7) Failed to connect to app.cnteam.test: Connection refused` | DNS resolves domain to `10.7.14.242`, but TCP SYN packet to port 8443 receives a TCP RST. No TLS or HTTP handshake can begin. |
-| **DNS Server Stopped** (dnsmasq down on Mac 1) | Mac 1 (:53) | `Could not resolve host: app.cnteam.test` | Client cannot resolve domain name to an IP. No TCP packets are emitted toward Mac 2. |
+- **Standby Configuration:** Located in `standby-edge/`. Listens on ports 8080 and 8443 (TLS).
+- **Header Injection:** Injects `X-Edge: mac3-standby` to make migration immediately distinguishable in HTTP traces.
+- **Upstream Pool:**
+  - `server 127.0.0.1:3001` (Backend A, local loopback)
+  - `server 10.7.5.197:3002` (Backend B on Mac 4, remote)
+- **Cutover Process:**
+  1. Primary edge (Mac 2: `10.7.3.251`) serves traffic.
+  2. DNS servers on Mac 1 and Mac 4 update `app.cnteam.test` $\to$ `10.7.15.127`.
+  3. Already-cached clients continue hitting Mac 2 until 30s TTL expires.
+  4. Subsequent client queries resolve to `10.7.15.127` and hit the Mac 3 Standby Edge seamlessly.
