@@ -9,10 +9,10 @@
 
 | Machine | Owner | Roles in Phase 2 | IPv4 (review day) |
 |---|---|---|---|
-| Mac 1 | Kartikey | Primary DNS, test client | |
+| Mac 1 | Kartikey | Primary DNS, test client | 10.7.22.176 (2026-11-22 18:12) |
 | Mac 2 | Agnik | Primary edge (nginx LB + TLS) | 10.7.3.251 (2026-11-22, re-check) |
-| Mac 3 | Vishuti | Backend A :3001, standby edge (Ext E) | |
-| Mac 4 | Anwesha | Backend B :3002, backup DNS, test client | |
+| Mac 3 | Vishuti | Backend A :3001, standby edge (Ext E) | 10.7.15.127 (2026-11-22 18:12) |
+| Mac 4 | Anwesha | Backend B :3002, backup DNS, test client | 10.7.19.42 (2026-11-22 18:12) |
 
 ## 1. What changed from Phase 1
 
