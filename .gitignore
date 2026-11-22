@@ -3,3 +3,5 @@
 logs/
 *.key
 certs/*.key
+backups/
+

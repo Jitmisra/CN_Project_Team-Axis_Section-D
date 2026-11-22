@@ -1,58 +1,63 @@
 #!/usr/bin/env bash
-# Task D - render the nginx server block from team.env and reload nginx.
+# Task D/E + Phase 2 Ext D: render the PRIMARY edge config from config/edge.conf.tmpl and
+# reload nginx. The standby edge (Ext E) renders the same template via standby-edge/.
+#   ./scripts/d-install-nginx.sh            render + test + reload/start
+#   DRY_RUN=1 ./scripts/d-install-nginx.sh  render to stdout only
 set -euo pipefail
 cd "$(dirname "$0")/.."
 source team.env
 
-if [ -z "$MAC3_BACKEND_A_IP" ] || [ -z "$MAC4_BACKEND_B_IP" ]; then
-  echo "team.env is missing MAC3_BACKEND_A_IP and/or MAC4_BACKEND_B_IP."
-  echo "Fill those in once Vishuti and Anwesha report their IPs, then re-run this script."
-  exit 1
-fi
+: "${MAC3_BACKEND_A_IP:?fill MAC3_BACKEND_A_IP in team.env}"
+: "${MAC4_BACKEND_B_IP:?fill MAC4_BACKEND_B_IP in team.env}"
+EDGE_NAME="${EDGE_NAME:-mac2-primary}"
 
-NGINX_PREFIX="$(brew --prefix nginx)"
-SERVERS_DIR="$(brew --prefix)/etc/nginx/servers"
-CERT_DIR="$(pwd)/certs"
+BREW_PREFIX="$(brew --prefix)"                    # NOT $(brew --prefix nginx): that is the Cellar
+SERVERS_DIR="$BREW_PREFIX/etc/nginx/servers"      # nginx.conf does `include servers/*;`
 CONF="$SERVERS_DIR/app-${TEAM_DOMAIN}.conf"
+CERT_DIR="$(pwd)/certs"
+ACCESS_LOG="$BREW_PREFIX/var/log/nginx/edge-access.log"
 
-mkdir -p "$SERVERS_DIR"
+[ -f "$CERT_DIR/${TEAM_DOMAIN}.crt" ] && [ -f "$CERT_DIR/${TEAM_DOMAIN}.key" ] \
+  || { echo "No TLS cert/key in $CERT_DIR. Run ./scripts/e-make-cert.sh first."; exit 1; }
 
-if [ ! -f "$CERT_DIR/${TEAM_DOMAIN}.crt" ]; then
-  echo "No TLS cert found. Run ./scripts/e-make-cert.sh first."
+render() {
+  sed -e "s|@EDGE_NAME@|$EDGE_NAME|g" \
+      -e "s|@BACKEND_A@|${MAC3_BACKEND_A_IP}:${BACKEND_A_PORT}|g" \
+      -e "s|@BACKEND_B@|${MAC4_BACKEND_B_IP}:${BACKEND_B_PORT}|g" \
+      -e "s|@HTTP_PORT@|$EDGE_HTTP_PORT|g" \
+      -e "s|@HTTPS_PORT@|$EDGE_HTTPS_PORT|g" \
+      -e "s|@DOMAIN@|$TEAM_DOMAIN|g" \
+      -e "s|@CERT@|$CERT_DIR/${TEAM_DOMAIN}.crt|g" \
+      -e "s|@KEY@|$CERT_DIR/${TEAM_DOMAIN}.key|g" \
+      -e "s|@ACCESS_LOG@|$ACCESS_LOG|g" \
+      config/edge.conf.tmpl
+}
+
+if [ "${DRY_RUN:-0}" = 1 ]; then render; exit 0; fi
+
+mkdir -p "$SERVERS_DIR" "$(dirname "$ACCESS_LOG")" config/backups
+# Back up the live file OUTSIDE servers/ (anything in servers/ gets loaded by nginx).
+[ -f "$CONF" ] && cp "$CONF" "config/backups/app-${TEAM_DOMAIN}.conf.$(date +%Y%m%d-%H%M%S)"
+
+render > "$CONF.new"
+mv "$CONF.new" "$CONF"
+cp "$CONF" "config/app-${TEAM_DOMAIN}.conf"       # repo copy of what is live (no secrets inside)
+echo "Wrote $CONF  (edge=$EDGE_NAME, A=${MAC3_BACKEND_A_IP}:${BACKEND_A_PORT}, B=${MAC4_BACKEND_B_IP}:${BACKEND_B_PORT})"
+
+if ! nginx -t; then
+  echo "!! nginx -t failed. Restoring the previous config."
+  last="$(ls -t config/backups/app-${TEAM_DOMAIN}.conf.* 2>/dev/null | head -1 || true)"
+  [ -n "$last" ] && cp "$last" "$CONF"
   exit 1
 fi
 
-cat > "$CONF" <<EOF
-upstream backend_pool {
-    server ${MAC3_BACKEND_A_IP}:${BACKEND_A_PORT} max_fails=2 fail_timeout=5s;
-    server ${MAC4_BACKEND_B_IP}:${BACKEND_B_PORT} max_fails=2 fail_timeout=5s;
-    # round-robin (nginx default) across Backend A and Backend B
-}
-
-server {
-    listen ${EDGE_HTTP_PORT};
-    server_name app.${TEAM_DOMAIN} api.${TEAM_DOMAIN};
-    return 301 https://\$host:${EDGE_HTTPS_PORT}\$request_uri;
-}
-
-server {
-    listen ${EDGE_HTTPS_PORT} ssl;
-    server_name app.${TEAM_DOMAIN} api.${TEAM_DOMAIN};
-
-    ssl_certificate     ${CERT_DIR}/${TEAM_DOMAIN}.crt;
-    ssl_certificate_key ${CERT_DIR}/${TEAM_DOMAIN}.key;
-
-    location / {
-        proxy_pass http://backend_pool;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Forwarded-For \$remote_addr;
-        proxy_next_upstream error timeout http_502 http_503 http_504;
-    }
-}
-EOF
-
-echo "Wrote $CONF"
-"$NGINX_PREFIX/bin/nginx" -t
-brew services restart nginx
+# nginx retitles its processes ("nginx: master process ..."), so `pgrep -x nginx` never matches.
+# Use the master PID file instead.
+PIDFILE="$(brew --prefix)/var/run/nginx.pid"
+if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+  nginx -s reload && echo "nginx reloaded (graceful: existing connections finish on old workers)"
+else
+  brew services start nginx
+fi
 sleep 1
-brew services info nginx
+lsof -nP -iTCP:"$EDGE_HTTPS_PORT" -sTCP:LISTEN | head -3
