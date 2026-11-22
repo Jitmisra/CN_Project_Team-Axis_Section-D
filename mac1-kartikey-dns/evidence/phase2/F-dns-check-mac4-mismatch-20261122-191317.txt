@@ -1,0 +1,146 @@
+
+[19:13:17] Kartikeys-MacBook-Pro$ pgrep -lf dnsmasq
+77401 /opt/homebrew/opt/dnsmasq/sbin/dnsmasq --keep-in-foreground -C /opt/homebrew/etc/dnsmasq.conf -7 /opt/homebrew/etc/dnsmasq.d,*.conf
+78541 /bin/zsh -c source /Users/kartikey0104/.claude/shell-snapshots/snapshot-zsh-1795350934477-td08d9.sh 2>/dev/null || true && \builtin setopt NO_EXTENDED_GLOB NO_BARE_GLOB_QUAL NO_BRACE_CCL NO_MAGIC_EQUAL_SUBST NO_EQUALS 2>/dev/null || true && { \builtin unalias -- 'which'; \builtin unset -f -- 'which'; } >/dev/null 2>&1 || true && { \builtin unalias -- 'unsetenv'; \builtin unset -f -- 'unsetenv'; } >/dev/null 2>&1 || true && eval 'cd ~/Desktop/CN_Project_Team-Axis_Section-D/mac1-kartikey-dns && ./scripts/f-dns-check.sh 2>&1 | grep -E '"'"'==>|MISMATCH|OK$|dig:|ip_address|status:|SERVER|^app\.|en0|team.env|dnsmasq --test|syntax|pgrep|[0-9]+ .*dnsmasq|nameserver\['"'"' | grep -v '"'"'global options'"'"' | head -40; ls -t evidence/phase2/F-dns-check-* | head -1' < /dev/null && pwd -P >| /tmp/claude-3e6b-cwd
+78542 /bin/zsh -c source /Users/kartikey0104/.claude/shell-snapshots/snapshot-zsh-1795350934477-td08d9.sh 2>/dev/null || true && \builtin setopt NO_EXTENDED_GLOB NO_BARE_GLOB_QUAL NO_BRACE_CCL NO_MAGIC_EQUAL_SUBST NO_EQUALS 2>/dev/null || true && { \builtin unalias -- 'which'; \builtin unset -f -- 'which'; } >/dev/null 2>&1 || true && { \builtin unalias -- 'unsetenv'; \builtin unset -f -- 'unsetenv'; } >/dev/null 2>&1 || true && eval 'cd ~/Desktop/CN_Project_Team-Axis_Section-D/mac1-kartikey-dns && ./scripts/f-dns-check.sh 2>&1 | grep -E '"'"'==>|MISMATCH|OK$|dig:|ip_address|status:|SERVER|^app\.|en0|team.env|dnsmasq --test|syntax|pgrep|[0-9]+ .*dnsmasq|nameserver\['"'"' | grep -v '"'"'global options'"'"' | head -40; ls -t evidence/phase2/F-dns-check-* | head -1' < /dev/null && pwd -P >| /tmp/claude-3e6b-cwd
+78543 ugrep -G --ignore-files --hidden -I --encoding=UTF-8 --exclude-dir=.git --exclude-dir=.svn --exclude-dir=.hg --exclude-dir=.bzr --exclude-dir=.jj --exclude-dir=.sl -E ==>|MISMATCH|OK$|dig:|ip_address|status:|SERVER|^app\.|en0|team.env|dnsmasq --test|syntax|pgrep|[0-9]+ .*dnsmasq|nameserver\[
+
+[19:13:17] Kartikeys-MacBook-Pro$ dnsmasq --test -C /opt/homebrew/etc/dnsmasq.conf -7 /opt/homebrew/etc/dnsmasq.d,*.conf
+dnsmasq: syntax check OK.
+
+[19:13:17] Kartikeys-MacBook-Pro$ grep -h -E ^(address|listen-address|interface|bind-interfaces|local-ttl|server)=? /opt/homebrew/etc/dnsmasq.d/cnteam.conf /opt/homebrew/etc/dnsmasq.d/ttl.conf
+address=/app.cnteam.test/10.7.3.251
+address=/api.cnteam.test/10.7.3.251
+interface=en0
+listen-address=127.0.0.1
+server=1.1.1.1
+local-ttl=30
+
+[19:13:17] Kartikeys-MacBook-Pro$ ipconfig getifaddr en0
+10.7.22.176
+
+[19:13:17] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 @10.7.22.176 app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> +time=2 +tries=1 @10.7.22.176 app.cnteam.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 42901
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;app.cnteam.test.		IN	A
+
+;; ANSWER SECTION:
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+;; Query time: 0 msec
+;; SERVER: 10.7.22.176#53(10.7.22.176)
+;; WHEN: Sun Nov 22 19:13:17 IST 2026
+;; MSG SIZE  rcvd: 60
+
+
+[19:13:17] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 +short @10.7.19.42 app.cnteam.test
+10.7.15.127
+app.cnteam.test    Mac1(10.7.22.176)=10.7.3.251      Mac4(10.7.19.42)=10.7.15.127     <-- MISMATCH
+
+[19:13:17] Kartikeys-MacBook-Pro$ scutil --dns
+DNS configuration
+
+resolver #1
+  nameserver[0] : 10.7.22.176
+  nameserver[1] : 10.7.19.42
+  flags    : Request A records
+  reach    : 0x00030002 (Reachable,Local Address,Directly Reachable Address)
+
+resolver #2
+  domain   : local
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300000
+
+resolver #3
+  domain   : 254.169.in-addr.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300200
+
+resolver #4
+  domain   : 8.e.f.ip6.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300400
+
+resolver #5
+  domain   : 9.e.f.ip6.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300600
+
+resolver #6
+  domain   : a.e.f.ip6.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300800
+
+resolver #7
+  domain   : b.e.f.ip6.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 301000
+
+DNS configuration (for scoped queries)
+
+resolver #1
+  nameserver[0] : 10.7.22.176
+  nameserver[1] : 10.7.19.42
+  if_index : 11 (en0)
+  flags    : Scoped, Request A records
+  reach    : 0x00030002 (Reachable,Local Address,Directly Reachable Address)
+
+[19:13:17] Kartikeys-MacBook-Pro$ grep -n -v -E ^\s*(#|$) /etc/hosts
+7:127.0.0.1	localhost
+8:255.255.255.255	broadcasthost
+9:::1             localhost
+dig: 10.7.3.251   OS (dscacheutil): 10.7.3.251
+
+[19:13:17] Kartikeys-MacBook-Pro$ tail -n 15 /opt/homebrew/var/log/dnsmasq-cnteam.log
+Nov 22 19:13:07 dnsmasq[77401]: reply play.googleapis.com is 2001:4860:4846:400::
+Nov 22 19:13:07 dnsmasq[77401]: reply play.googleapis.com is 2001:4860:4840:400::
+Nov 22 19:13:07 dnsmasq[77401]: reply play.googleapis.com is 2001:4860:4841:400::
+Nov 22 19:13:07 dnsmasq[77401]: reply play.googleapis.com is 2001:4860:4843:400::
+Nov 22 19:13:14 dnsmasq[77401]: query[A] chat.cdn.whatsapp.net from 10.7.19.42
+Nov 22 19:13:14 dnsmasq[77401]: forwarded chat.cdn.whatsapp.net to 1.1.1.1
+Nov 22 19:13:14 dnsmasq[77401]: reply chat.cdn.whatsapp.net is 57.144.33.33
+Nov 22 19:13:17 dnsmasq[77401]: query[A] app.cnteam.test from 10.7.22.176
+Nov 22 19:13:17 dnsmasq[77401]: config app.cnteam.test is 10.7.3.251
+Nov 22 19:13:17 dnsmasq[77401]: query[A] app.cnteam.test from 10.7.22.176
+Nov 22 19:13:17 dnsmasq[77401]: config app.cnteam.test is 10.7.3.251
+Nov 22 19:13:17 dnsmasq[77401]: query[A] app.cnteam.test from 10.7.22.176
+Nov 22 19:13:17 dnsmasq[77401]: config app.cnteam.test is 10.7.3.251
+Nov 22 19:13:17 dnsmasq[77401]: query[A] app.cnteam.test from 10.7.22.176
+Nov 22 19:13:17 dnsmasq[77401]: config app.cnteam.test is 10.7.3.251
+
+How to read it:
+  no dnsmasq / dig timeout on both   -> DNS SERVICE down            (fix: dns_start)
+  NXDOMAIN from Mac 1                -> record deleted or name typo  (query went upstream to 1.1.1.1)
+  NOERROR but wrong IP               -> wrong A record               (fix in /opt/homebrew/etc/dnsmasq.d/cnteam.conf, restart)
+  Mac 1 != Mac 4                     -> servers out of sync, clients flip randomly (sync-check.sh)
+  scutil shows 8.8.8.8 etc.          -> client resolver misconfigured (client-dns.sh both)
+  dig != dscacheutil                 -> /etc/hosts override or stale OS cache (flush)
+  en0 IP != team.env                 -> DHCP drift; listen config / clients point at the old IP
+  all OK                             -> DNS is NOT the broken layer: move on to ping -> nc -vz -> TLS -> HTTP

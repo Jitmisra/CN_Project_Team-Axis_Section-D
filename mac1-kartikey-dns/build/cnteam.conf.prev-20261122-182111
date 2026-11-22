@@ -1,0 +1,20 @@
+# ==== CN project -- PRIMARY private DNS (Mac 1, Kartikey) ====
+# Installed as /opt/homebrew/etc/dnsmasq.d/cnteam.conf
+# (main /opt/homebrew/etc/dnsmasq.conf only contains conf-dir=.../dnsmasq.d,*.conf)
+
+# --- Project records: both names -> Mac 2 (nginx edge). Clients never get backend IPs.
+address=/app.cnteam.test/10.7.14.242
+address=/api.cnteam.test/10.7.14.242
+
+# --- Where to listen: loopback (Mac 1 as its own client) + LAN IP (teammates)
+listen-address=127.0.0.1,10.7.8.82
+bind-interfaces
+
+# --- Everything that is not ours goes upstream, so clients can still browse.
+no-resolv
+server=1.1.1.1
+no-hosts
+
+# --- Evidence: every query/answer is logged
+log-queries
+log-facility=/opt/homebrew/var/log/dnsmasq-cnteam.log

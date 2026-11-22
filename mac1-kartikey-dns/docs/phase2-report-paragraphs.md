@@ -12,6 +12,8 @@ this note. **Don't submit placeholders.**
 | A: both backends stopped | resolves + TLS OK, 502 | `dig` NOERROR, `SSL certificate verify ok`, `HTTP/1.1 502` | [__] | `A-dns-vs-app-failure.txt` |
 | B: record change, wait | old answer ≤30 s, then new | TTL 0 → 30 on the wire. Change issued 18:39:44, dnsmasq serving the new IP by 18:39:54; OS cache still old at 18:40:20, new at 18:40:23 (≈30 s); curl `X-Edge: mac2-primary` → `Failed to connect` at the same moment | ✅ | `B-ttl-20261122-183943.txt`, `B-ttl-onwire-20261122-183628.txt` |
 | B: record change, flush | new answer immediately | record reverted 18:40:36, cache still stale at 18:40:38; flushed 18:40:39, next lookup already 10.7.3.251 and `X-Edge: mac2-primary` | ✅ | `B-ttl-20261122-183943.txt` |
+| C: client → 3001 direct (Mac 3 pf) | blocked | before (19:02:23): `nc` succeeded, curl 200. After (19:10:43): `nc` **Connection refused** (pf `block return`), curl failed to connect; `https://app.cnteam.test:8443` still 200 A/B | ✅ | `C-client-blocked.txt` |
+| C: client → 3002 direct (Mac 4 pf) | blocked | **still open** from Mac 1 at 19:10:43 and 19:13:09 (`nc` succeeded): Anwesha's pf wasn't blocking Mac 1 yet | ❌ (pending) | `C-client-blocked.txt` |
 
 ## Ext A: Backup DNS
 
@@ -49,3 +51,17 @@ TTL is the upper bound on how long a DNS-based cutover takes to reach everyone. 
 lower the TTL hours *before* the move (the old, long TTL has to expire first), cut over, then raise it again.
 Even after the TTL expires, existing TCP or keep-alive connections never re-resolve and stay on the old server
 until they close. So you keep the old edge running until its traffic drains (Ext E).
+
+## Ext F finding (DNS layer): a silent fault behind redundancy
+
+At 19:10 and again at 19:13 the backup DNS on Mac 4 answered `app.cnteam.test → 10.7.15.127` (the standby edge),
+while Mac 1 answered 10.7.3.251. It was a leftover from practising the Ext E mirror command. Nothing visibly
+broke: the standby edge was healthy, so clients whose resolver happened to pick Mac 4 got HTTP 200 from
+`mac3-standby` instead of `mac2-primary`. That's the dangerous kind of fault, because redundancy hides it. It only
+showed up because we compare both servers explicitly (`sync-check.sh`, board check "DNS servers agree").
+`f-dns-check.sh` isolated it layer by layer: Mac 1 dnsmasq running, config valid, en0 IP matches `team.env`,
+Mac 1 answer correct, no `/etc/hosts` override (dig = dscacheutil), query log shows the client's queries
+arriving → Mac 1 healthy; **only Mac 4's data differs** → a DNS data fault on the backup, not a network or app
+fault. Fix: rewrite the record on Mac 4 and restart. Lesson: with two name servers, "it resolves" isn't enough.
+Both must give the *same* answer, and checking that has to be automated, which is what zone transfers or one
+managed hosted zone do in production. Evidence: `F-dns-check-mac4-mismatch-20261122-191317.txt`.
