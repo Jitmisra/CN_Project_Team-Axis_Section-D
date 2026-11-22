@@ -7,7 +7,7 @@ this note. **Don't submit placeholders.**
 
 | Test | Expected | Observed | Pass | Evidence |
 |---|---|---|---|---|
-| A: primary DNS stopped | clients resolve via Mac 4 | `dscacheutil` → [__], curl (no `-k`) → 200 from Backend [__]; Mac 4 log shows query from [__] | [__] | `mac1-kartikey-dns/evidence/phase2/A-backup-failover-*.txt`, `A-failover-*.pcap` |
+| A: primary DNS stopped | clients resolve via Mac 4 | Mac 1 dnsmasq stopped 19:05:00. `dig @Mac1` timed out, and the pcap shows ICMP `udp port 53 unreachable` from Mac 1. `nslookup` → `Server: 10.7.19.42`, `dscacheutil` → 10.7.3.251; Mac 4 replies `A 10.7.3.251` in the en0 pcap. 3× curl by name, no `-k` → HTTP/2 200 (A, B, A) via `mac2-primary`. Primary restarted 19:05:13 | ✅ | `A-backup-failover-20261122-190456.txt`, `A-failover-20261122-190456-{lo0,en0}.pcap` |
 | A: both DNS stopped | resolution fails, IP reachable | `Could not resolve host`; `curl -k https://<MAC2_IP>:8443` → [__] | [__] | `A-dns-vs-app-failure.txt` |
 | A: both backends stopped | resolves + TLS OK, 502 | `dig` NOERROR, `SSL certificate verify ok`, `HTTP/1.1 502` | [__] | `A-dns-vs-app-failure.txt` |
 | B: record change, wait | old answer ≤30 s, then new | TTL 0 → 30 on the wire. Change issued 18:39:44, dnsmasq serving the new IP by 18:39:54; OS cache still old at 18:40:20, new at 18:40:23 (≈30 s); curl `X-Edge: mac2-primary` → `Failed to connect` at the same moment | ✅ | `B-ttl-20261122-183943.txt`, `B-ttl-onwire-20261122-183628.txt` |

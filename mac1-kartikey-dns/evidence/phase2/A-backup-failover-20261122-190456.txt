@@ -1,0 +1,158 @@
+app.cnteam.test    Mac1(10.7.22.176)=10.7.3.251      Mac4(10.7.19.42)=10.7.3.251      OK
+api.cnteam.test    Mac1(10.7.22.176)=10.7.3.251      Mac4(10.7.19.42)=10.7.3.251      OK
+
+==> Resolvers on Wi-Fi:
+10.7.22.176
+10.7.19.42
+  in use: 10.7.22.176
+  in use: 10.7.19.42
+
+[19:05:00] Kartikeys-MacBook-Pro$ dns_stop
+
+[19:05:01] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 @10.7.22.176 app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> +time=2 +tries=1 @10.7.22.176 app.cnteam.test
+; (1 server found)
+;; global options: +cmd
+;; connection timed out; no servers could be reached
+
+[19:05:04] Kartikeys-MacBook-Pro$ dig +time=2 +tries=1 @10.7.19.42 app.cnteam.test
+
+; <<>> DiG 9.10.6 <<>> +time=2 +tries=1 @10.7.19.42 app.cnteam.test
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 62947
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;app.cnteam.test.		IN	A
+
+;; ANSWER SECTION:
+app.cnteam.test.	30	IN	A	10.7.3.251
+
+;; Query time: 62 msec
+;; SERVER: 10.7.19.42#53(10.7.19.42)
+;; WHEN: Sun Nov 22 19:05:04 IST 2026
+;; MSG SIZE  rcvd: 60
+
+
+[19:05:04] Kartikeys-MacBook-Pro$ scutil --dns
+DNS configuration
+
+resolver #1
+  nameserver[0] : 10.7.22.176
+  nameserver[1] : 10.7.19.42
+  flags    : Request A records
+  reach    : 0x00030002 (Reachable,Local Address,Directly Reachable Address)
+
+resolver #2
+  domain   : local
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300000
+
+resolver #3
+  domain   : 254.169.in-addr.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300200
+
+resolver #4
+  domain   : 8.e.f.ip6.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300400
+
+resolver #5
+  domain   : 9.e.f.ip6.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300600
+
+resolver #6
+  domain   : a.e.f.ip6.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 300800
+
+resolver #7
+  domain   : b.e.f.ip6.arpa
+  options  : mdns
+  timeout  : 5
+  flags    : Request A records
+  reach    : 0x00000000 (Not Reachable)
+  order    : 301000
+
+DNS configuration (for scoped queries)
+
+resolver #1
+  nameserver[0] : 10.7.22.176
+  nameserver[1] : 10.7.19.42
+  if_index : 11 (en0)
+  flags    : Scoped, Request A records
+  reach    : 0x00030002 (Reachable,Local Address,Directly Reachable Address)
+
+[19:05:04] Kartikeys-MacBook-Pro$ dscacheutil -q host -a name app.cnteam.test
+name: app.cnteam.test
+ip_address: 10.7.3.251
+
+
+[19:05:07] Kartikeys-MacBook-Pro$ nslookup app.cnteam.test
+Server:		10.7.19.42
+Address:	10.7.19.42#53
+
+Name:	app.cnteam.test
+Address: 10.7.3.251
+
+
+[19:05:08] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 13:35:09 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}
+[19:05:09] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 13:35:09 GMT
+content-type: application/json
+content-length: 32
+x-backend: B
+cache-control: max-age=60
+etag: "f50db9b5982be874"
+x-edge: mac2-primary
+
+{"backend": "B", "status": "ok"}
+[19:05:09] Kartikeys-MacBook-Pro$ curl -sS -i --max-time 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 13:35:10 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}
+[19:05:13] Kartikeys-MacBook-Pro$ dig +short @10.7.22.176 app.cnteam.test
+10.7.3.251
