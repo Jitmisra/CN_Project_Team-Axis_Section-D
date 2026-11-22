@@ -150,3 +150,59 @@ x-edge: mac2-primary
 
 {"backend": "A", "status": "ok"}Expected 'restored': direct = 200, edge = 200
   (refused = pf 'block return' sends RST; timeout = 'block drop' silently discards)
+
+######## restored -- 2026-11-22 19:36:23 on Kartikeys-MacBook-Pro (10.7.22.176) ########
+
+[19:36:23] Kartikeys-MacBook-Pro$ nc -vz -G 3 10.7.15.127 3001
+Connection to 10.7.15.127 port 3001 [tcp/redwood-broker] succeeded!
+
+[19:36:23] Kartikeys-MacBook-Pro$ nc -vz -G 3 10.7.19.42 3002
+Connection to 10.7.19.42 port 3002 [tcp/exlm-agent] succeeded!
+
+[19:36:23] Kartikeys-MacBook-Pro$ curl -sS -i -m 5 http://10.7.15.127:3001/api/status
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.2
+Date: Sun, 22 Nov 2026 14:06:23 GMT
+Content-Type: application/json
+X-Backend: A
+Cache-Control: max-age=60
+ETag: "4a04d2d7b5598c32"
+Content-Length: 32
+
+{"backend": "A", "status": "ok"}
+[19:36:24] Kartikeys-MacBook-Pro$ curl -sS -i -m 5 http://10.7.19.42:3002/api/status
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.14.6
+Date: Sun, 22 Nov 2026 14:06:24 GMT
+Content-Type: application/json
+X-Backend: B
+Cache-Control: max-age=60
+ETag: "f50db9b5982be874"
+Content-Length: 32
+
+{"backend": "B", "status": "ok"}
+[19:36:24] Kartikeys-MacBook-Pro$ curl -sS -i -m 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 14:06:24 GMT
+content-type: application/json
+content-length: 32
+x-backend: B
+cache-control: max-age=60
+etag: "f50db9b5982be874"
+x-edge: mac2-primary
+
+{"backend": "B", "status": "ok"}
+[19:36:24] Kartikeys-MacBook-Pro$ curl -sS -i -m 5 https://app.cnteam.test:8443/api/status
+HTTP/2 200 
+server: nginx/1.31.6
+date: Sun, 22 Nov 2026 14:06:24 GMT
+content-type: application/json
+content-length: 32
+x-backend: A
+cache-control: max-age=60
+etag: "4a04d2d7b5598c32"
+x-edge: mac2-primary
+
+{"backend": "A", "status": "ok"}Expected 'restored': direct = 200, edge = 200
+  (refused = pf 'block return' sends RST; timeout = 'block drop' silently discards)
