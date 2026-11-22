@@ -1,4 +1,4 @@
-# Study Guide: Team Axis Private Network Platform
+https://github.com/Jitmisra/cn-guide# Study Guide: Team Axis Private Network Platform
 
 One document to understand **everything we built, why it works, what we measured, what went wrong, and how
 to answer the viva**. Read it top to bottom once, then use §9–§10 to revise.

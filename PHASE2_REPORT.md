@@ -4,7 +4,7 @@
 Team: Kartikey (Mac 1) · Agnik (Mac 2) · Vishuti (Mac 3) · Anwesha (Mac 4)
 Domain: `app.cnteam.test`, `api.cnteam.test` · Edge: nginx on 8080 → 8443 (TLS) · Tests run 22 Nov 2026
 
-> Companion documents: [`STUDY_GUIDE.md`](./STUDY_GUIDE.md) (how everything works, viva prep),
+> Companion documents: [study guide](https://github.com/Jitmisra/cn-guide) (how everything works, viva prep),
 > [`ARCHITECTURE.md`](./ARCHITECTURE.md) (topology), [`EVIDENCE_INDEX.md`](./EVIDENCE_INDEX.md) (every evidence file).
 
 ---
@@ -127,7 +127,7 @@ backend**. Each layer has its own tool. These are real faults we hit on 22 Nov, 
 **Tools for the faculty-injected fault:** `tools/diagnose.sh` (Anwesha: 9 layers, stops at the first failing one),
 `backend_a/scripts/troubleshoot.sh` (Vishuti: process, port binding, pf), `mac1-kartikey-dns/scripts/f-dns-check.sh`
 (Kartikey: DNS server health and data), `mac2-agnik-nginx-edge/scripts/team-check.sh` and the team board's live checks
-(Agnik: every machine in one view). The practice fault list is in `STUDY_GUIDE.md` §7.
+(Agnik: every machine in one view). The practice fault list is in the [study guide](https://github.com/Jitmisra/cn-guide) §7.
 
 ## 5. Learning summary (one paragraph per extension)
 

@@ -6,7 +6,7 @@ across 4 machines.
 
 | Read this | For |
 |---|---|
-| **[`STUDY_GUIDE.md`](./STUDY_GUIDE.md)** | how the whole system works, every result, troubleshooting playbook, viva Q&A (start here) |
+| **[Study guide (cn-guide)](https://github.com/Jitmisra/cn-guide)** | how the whole system works, every result, troubleshooting playbook, viva Q&A, plus a guide per member |
 | **[`PHASE2_REPORT.md`](./PHASE2_REPORT.md)** | Phase 2 final report: what changed, test results with timestamps, findings, learning per extension |
 | [`ARCHITECTURE.md`](./ARCHITECTURE.md) | topology, IP table, request flow by protocol layer, Phase 2 design |
 | [`EVIDENCE_INDEX.md`](./EVIDENCE_INDEX.md) | every evidence file, by task / extension |
