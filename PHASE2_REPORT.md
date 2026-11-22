@@ -34,8 +34,8 @@
 | A: both backends stopped (contrast) | resolves + TLS OK, 502 | | | |
 | B: record change, wait | old answer ≤30 s, then new | record changed 18:39:44. Client OS cache kept the old IP until **t=+29 s**, then switched (dig showed the new IP from t=0) | ✅ | `mac1-kartikey-dns/evidence/phase2/B-ttl-20261122-183943.txt` |
 | B: record change, flush | new answer immediately | record changed back 18:40:36, client still stale. Manual flush at 18:40:39 → new answer **immediately** | ✅ | same file |
-| C: client → 3001/3002 direct | blocked (refused / timeout) | | | |
-| C: edge → 3001/3002 | allowed, LB alternates | | | |
+| C: client → 3001/3002 direct | blocked (refused / timeout) | Mac 1 → 10.7.19.42:3002: `Operation timed out` (pf drop). 3001 on Mac 3: _pending Kartikey's test_ | ✅ (3002) | Kartikey's `C-client-blocked.txt` |
+| C: edge → 3001/3002 | allowed, LB alternates | Mac 2 → 3001 and 3002 both open, direct HTTP 200, through the edge A B A B A B | ✅ | `mac2-agnik-nginx-edge/evidence/phase2/C-edge-still-allowed-20261122-185417.txt` |
 | C: rollback | direct access restored | | | |
 | D: Backend A stopped | 100% served by B, 0 errors | A down ~18:48:12–18:48:57 (46 s): every request served by B. **252/252 requests HTTP 200** over 5 min. nginx re-probed A at 18:48:14, :29, :44 (each `Connection refused`) and retried on B **inside the same request** | ✅ | `mac2-agnik-nginx-edge/evidence/phase2/D-watch-agniks-MacBook-Pro-20261122-184729.txt`, `D-edge-logs-20261122-184728.txt` |
 | D: Backend A restarted | alternation resumes in ~10–15 s | A served again at 18:48:58, A/B alternation resumed straight away | ✅ | same files |
