@@ -23,6 +23,9 @@ mac4_up()   { [[ -n "$(ask "$MAC4_IP" "$APP")" ]]; }
 edge_code() { curl -s -o /dev/null -w '%{http_code}' --max-time 5 "https://$APP:$HTTPS_PORT/api/status" || true; }
 edge_502()  { [[ "$(edge_code)" == 502 ]]; }
 edge_200()  { [[ "$(edge_code)" == 200 ]]; }
+both_backends() { local i seen=""; for i in 1 2 3 4; do  # restored = BOTH A and B answer through the edge
+  seen+="$(curl -s -o /dev/null -D - --max-time 5 "https://$APP:$HTTPS_PORT/api/status" | tr -d '\r' | awk -F': ' 'tolower($1)=="x-backend"{print $2}')"; done
+  [[ "$seen" == *A* && "$seen" == *B* ]]; }
 trap 'dns_start || true' EXIT
 sudo -v
 log ""; log "################ run $STAMP on $(hostname -s) ################"
@@ -66,7 +69,7 @@ c="$(edge_code)"; [[ "$c" == 502 ]] \
   && log "VERDICT 2 (PASS): resolves, TCP + TLS OK, nginx returns 502 -> application (backend) layer failure." \
   || log "VERDICT 2 (FAIL): edge returned $c, not 502 -> not valid evidence."
 tell "@vishuti START Backend A and @anwesha START Backend B again. Part 2 captured."
-wait_until "edge returns 200 again (backends back)" edge_200
+wait_until "edge serves BOTH Backend A and Backend B again" both_backends
 ev "$f" curl -sS -i --max-time 5 "https://$APP:$HTTPS_PORT/api/status"
 tell "done, everything restored (DNS both up, backends up). Evidence: mac1-kartikey-dns/evidence/phase2/A-dns-vs-app-failure.txt"
 echo; echo "Saved -> evidence/$f"
