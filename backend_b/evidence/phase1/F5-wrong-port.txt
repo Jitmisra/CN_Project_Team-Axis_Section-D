@@ -1,0 +1,16 @@
+=== Phase 1 Demo #5: Wrong Destination Port ===
+--- Ping Mac 2 (10.7.3.251) ---
+ping: sendto: No route to host
+ping: sendto: No route to host
+PING 10.7.3.251 (10.7.3.251): 56 data bytes
+Request timeout for icmp_seq 0
+
+--- 10.7.3.251 ping statistics ---
+2 packets transmitted, 0 packets received, 100.0% packet loss
+Ping failed (check if Mac 2 is on)
+
+--- Try wrong port 9999 (Connection refused) ---
+nc: connectx to 10.7.3.251 port 9999 (tcp) failed: No route to host
+
+--- Try correct port 8443 (Succeeded) ---
+nc: connectx to 10.7.3.251 port 8443 (tcp) failed: No route to host

@@ -1,0 +1,5 @@
+
+; <<>> DiG 9.10.6 <<>> @10.7.19.42 app.cnteam.test +noall +answer
+; (1 server found)
+;; global options: +cmd
+app.cnteam.test.	30	IN	A	10.7.3.251

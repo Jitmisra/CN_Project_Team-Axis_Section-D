@@ -66,12 +66,39 @@ demo, so anything can be found in under 30 seconds. See
 - `backend_a/evidence/phase1-demo-502-recovery.txt`
 
 ## Phase 1 failure demo #5 — wrong destination port on a client
-- Run by Anwesha: `curl -v http://10.7.14.242:9999` → `Connection refused` (paired with
-  a successful `ping` to the same host). Not yet committed as a file — see note below.
+- `backend_b/evidence/phase1/F5-wrong-port.txt` (Anwesha: ping Mac 2 reachable, port 9999 connection refused, port 8443 open)
 
-## Still manual / not yet in this repo
-- Screenshots: DNS resolver settings before/after (System Settings → Network), and the
-  `.pcap`/`.pcapng` files above opened in Wireshark. Flagged as outstanding in
-  `mac1-kartikey-dns/README.md`.
-- Failure demo #5's output (ping + wrong-port curl) — ask Anwesha to save her terminal
-  output into `backend_b/evidence/` and add it here.
+## Phase 2 — Resilience, Isolation, and Troubleshooting
+
+### Extension A — Backup DNS Server & Failover
+- `backend_b/config/cnteam.conf` (Mac 4 backup dnsmasq config with `interface=en0` and `local-ttl=30`)
+- `backend_b/scripts/dns-backup.sh` (Management script: install, status, set-record, sync-check)
+- `backend_b/evidence/phase2/A-backup-dns-dig.txt` (`dig @10.7.19.42 app.cnteam.test` output)
+- `backend_b/evidence/phase2/A-resolver-settings.png` (Screenshot of Wi-Fi DNS resolvers: 10.7.22.176 primary, 10.7.19.42 backup)
+- `mac1-kartikey-dns/scripts/demo-backup-failover.sh` (Kartikey: primary DNS stopped while resolution continues)
+
+### Extension B — TTL & Record Modification
+- `mac1-kartikey-dns/config/ttl.conf` (Kartikey: TTL 30s template)
+- `mac1-kartikey-dns/scripts/demo-ttl.sh` (Kartikey: record change test)
+- `backend_b/evidence/phase2/B-client-observation.txt` (Anwesha: client watcher observing cached response expiring after 30s)
+
+### Extension C — Service Isolation (Firewall)
+- `backend_a/config/pf_rules_isolation.conf` (Vishuti: port 3001 isolation)
+- `backend_b/config/pf_rules_isolation.conf` (Anwesha: port 3002 anchor isolation for edge tier)
+- `backend_b/scripts/firewall-enable.sh` / `firewall-disable.sh` / `firewall-status.sh`
+- `backend_b/evidence/phase2/C-isolation-3002.txt` (Evidence: Mac 1 blocked, Mac 2 allowed, edge LB functioning)
+
+### Extension D — High Availability & Passive Failover
+- `mac2-agnik-nginx-edge/scripts/g-failover-watch.sh` (Agnik: edge load-balancer observer)
+- `backend_b/evidence/phase2/D-client-watch.txt` (Anwesha: client watch showing Backend A stopped, zero errors, 100% traffic to B)
+
+### Extension E — DNS-Based Standby Edge Migration
+- `mac1-kartikey-dns/scripts/cutover.sh` (Kartikey: DNS repoint to standby edge)
+- `mac2-agnik-nginx-edge/scripts/switch-dns.sh`
+- `backend_b/evidence/phase2/E-client-observation.txt` (Anwesha: client observation of X-Edge header switching from primary to standby)
+
+### Extension F — Faculty Fault Diagnosis
+- `tools/diagnose.sh` (Anwesha: 9-layer automated diagnosis tool)
+- `backend_b/evidence/phase2/F-diagnose-healthy.txt` (Baseline clean diagnosis run)
+- `backend_b/evidence/phase2/F-caching-304-B.txt` (ETag validation & 304 Not Modified verification from Backend B)
+
