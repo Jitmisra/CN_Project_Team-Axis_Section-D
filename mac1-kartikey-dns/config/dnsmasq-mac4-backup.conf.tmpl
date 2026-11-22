@@ -7,8 +7,9 @@
 #          dig @@MAC4_IP@ app.@TEAM@.test     # must print @MAC2_IP@
 address=/app.@TEAM@.test/@MAC2_IP@
 address=/api.@TEAM@.test/@MAC2_IP@
-listen-address=127.0.0.1,@MAC4_IP@
-bind-interfaces
+# listen by interface (survives a DHCP IP change); loopback is added automatically
+interface=en0
+listen-address=127.0.0.1
 no-resolv
 server=@UPSTREAM_DNS@
 no-hosts

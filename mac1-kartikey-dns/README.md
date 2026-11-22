@@ -33,6 +33,9 @@ evidence/phase1, phase2   <- outputs, pcaps (add screenshots here too)
 | DNS packet capture | Done: `evidence/phase1/dns-*.pcap` (lo0). Ask Anwesha for a Wi-Fi (en0) capture from Mac 4 too |
 | Trust Mac 2's TLS cert | Done: `certs/cnteam.test.crt` (fingerprint matches the live server) trusted in the login keychain. curl works without `-k`: `evidence/phase1/C-tls-trusted-*` |
 | Screenshots (resolver settings, Wireshark) | Still to do (manual) |
+| **Phase 2**: IP sync 2026-11-22 | Mac 1 10.7.22.176, Mac 2 10.7.3.251, Mac 3 10.7.15.127, Mac 4 10.7.19.42 |
+| Phase 2: listen config | Interface-based (`interface=en0`), survives DHCP changes. Tested on :5300 via 127.0.0.1 and LAN IP |
+| Phase 2 scripts | A: failover (no `-k`, pcaps) + DNS-vs-app contrast · B: TTL on-wire + demo with X-Edge · C: blocked client · E: cutover with Mac 4 mirror wait · F: DNS checklist · sync-check · watcher |
 
 **Mac 1 row for the shared IP table:**
 
@@ -75,22 +78,40 @@ cd mac1-kartikey-dns
 ./scripts/demo-wrong-record.sh          # failure demo 2 (auto-reverts the record)
 ```
 
-### Phase 2 (after Phase 1 is approved)
+### Phase 2
+Every session starts with the IP sync: `ipconfig getifaddr en0`, update `team.env`, then `./scripts/install-dns.sh`
+(scripts refuse to run if en0's IP no longer matches `MAC1_IP`). Then `./scripts/sync-check.sh` against Mac 4.
+Scripts marked (sudo) ask for your password, so run them yourself (`! ./scripts/x.sh` in Claude Code).
+
 ```bash
-# Ext A: send docs/handoff-anwesha-backup-dns.md + build/dnsmasq-mac4-backup.conf to Anwesha
-./scripts/render.sh                     # re-render once MAC4_IP is in team.env
-./scripts/client-dns.sh both            # Mac 1 primary + Mac 4 backup (screenshot it)
-./scripts/demo-backup-failover.sh       # stops Mac 1's dnsmasq, resolves via Mac 4, restarts
+# Ext A: backup DNS (Anwesha hosts on Mac 4; docs/handoff-anwesha-backup-dns.md + build/dnsmasq-mac4-backup.conf)
+./scripts/sync-check.sh                 # Mac 1 == Mac 4 for app + api (exit 1 = mismatch or a server is down)
+./scripts/client-dns.sh both            # (sudo) Mac 1 primary + Mac 4 backup -> screenshot System Settings DNS
+./scripts/demo-backup-failover.sh       # (sudo) stops Mac 1 dnsmasq, resolves via Mac 4, curl by name (no -k),
+                                        #        pcaps lo0+en0 -> evidence/phase2/A-failover-*.pcap, restarts primary
+./scripts/demo-dns-vs-app.sh            # (sudo, interactive) both DNS down vs both backends down -> A-dns-vs-app-failure.txt
 
-# Ext B: TTL
-./scripts/install-dns.sh --ttl          # TTL 0 -> 30 s
-./scripts/client-dns.sh primary         # only Mac 1, so the record change is the only variable
-./scripts/demo-ttl.sh                   # stale-until-expiry, then flush = instant
+# Ext B: TTL (yours alone). Observing clients use Mac 1 ONLY
+./scripts/b-ttl-onwire.sh               # (sudo) dig TTL before (0) / after (30) side by side; leaves TTL 30 on
+./scripts/client-dns.sh primary         # (sudo) Anwesha does the same on Mac 4
+./scripts/demo-ttl.sh                   # (sudo) alt = Mac 4: stale until expiry, then flush = instant
+./scripts/demo-ttl.sh standby           # (sudo) alt = Mac 3 standby edge: X-Edge flips mac2-primary -> mac3-standby
+./scripts/client-dns.sh both            # revert (demo-ttl restores the record itself on exit)
 
-# Ext E: edge cutover (when Agnik's standby nginx is up)
-./scripts/cutover.sh <STANDBY_IP>       # ...observe TTL effect...
-./scripts/cutover.sh back
+# Ext C: be the blocked client (no sudo)
+./scripts/c-client-blocked.sh before    # before Vishuti/Anwesha enable pf: direct access works (the problem)
+./scripts/c-client-blocked.sh after     # pf on: nc/curl to 3001/3002 fail, https://app... still 200
+./scripts/c-client-blocked.sh restored  # after firewall-disable.sh: direct access works again (rollback proven)
+
+# Ext E: DNS cutover to the standby edge on Mac 3 (TTL 30 on BOTH servers)
+./scripts/watch-edge.sh 120 2 E         # watcher (second terminal; Anwesha runs one on Mac 4 too)
+./scripts/cutover.sh standby            # (sudo) prints the Mac 4 mirror command, waits until Mac 4 agrees
+./scripts/cutover.sh back               # (sudo) + Anwesha mirrors; wait out the TTL
+
+# Ext F: DNS layer of the faculty fault (no sudo)
+./scripts/f-dns-check.sh                # dnsmasq up? config? drift? both servers? scutil? /etc/hosts? query log?
 ```
+Report paragraphs for Ext A + B: `docs/phase2-report-paragraphs.md` (Agnik pastes them into `PHASE2_REPORT.md`).
 
 ### Cleanup after the demo
 ```bash
@@ -111,8 +132,10 @@ security delete-certificate -c app.cnteam.test ~/Library/Keychains/login.keychai
 ## Gotchas
 - **`dig` bypasses the macOS cache. Browsers and curl don't.** For anything about caching or TTL,
   look at `dscacheutil -q host -a name app.cnteam.test`, not `dig`.
-- If Mac 1's IP changes (new DHCP lease), dnsmasq can't bind (`bind-interfaces`). Update
-  `MAC1_IP` and re-run `install-dns.sh`. Clients also need the new resolver IP.
+- If Mac 1's IP changes (new DHCP lease): Phase 1 listened on a fixed IP with `bind-interfaces`, so dnsmasq
+  died (this happened on 2026-11-22: 10.7.8.82 -> 10.7.22.176). Phase 2 listens by interface (`interface=en0`),
+  so dnsmasq survives the change, but **clients still point at the old IP**. Update `MAC1_IP`, re-run
+  `install-dns.sh`, and tell the team so they can update their resolver lists.
 - If the team changes `cnteam` to a real team name, change `TEAM=` in `team.env` and re-run
   `install-dns.sh`. Agnik's TLS cert SANs must match the same names.
 - If Agnik falls back to port 8443, set `HTTPS_PORT=8443` in `team.env`.
